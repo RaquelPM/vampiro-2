@@ -4,13 +4,18 @@ import { RectButtonProps } from 'react-native-gesture-handler';
 
 import { Container, Label } from './styles';
 
-export type PrimaryButtonProps = AnimateProps<RectButtonProps> & {
+export type ButtonProps = AnimateProps<RectButtonProps> & {
   children?: string;
+  size?: 'regular' | 'large';
 };
 
-export const PrimaryButton = ({ children, ...rest }: PrimaryButtonProps) => {
+export const Button = ({
+  children,
+  size = 'regular',
+  ...rest
+}: ButtonProps) => {
   return (
-    <Container {...rest}>
+    <Container size={size} {...rest}>
       <Label variant="button">{children}</Label>
     </Container>
   );

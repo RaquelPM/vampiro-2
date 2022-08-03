@@ -2,7 +2,7 @@ import styled from 'styled-components/native';
 import Animated from 'react-native-reanimated';
 
 import LogoImg from '~/assets/icons/logo.svg';
-import { PrimaryButton, SvgBackground } from '~/components';
+import { Button, SvgBackground } from '~/components';
 
 export const Container = styled(SvgBackground)`
   flex: 1;
@@ -23,8 +23,8 @@ export const Logo = styled(LogoImg)`
   height: 20px;
 `;
 
-export const InitButton = styled(PrimaryButton)`
+export const InitBtn = styled(Button)`
   margin: 34px 0 26px;
 `;
 
-export const MoreButton = styled(PrimaryButton)``;
+export const MoreBtn = styled(Button)``;

@@ -15,7 +15,7 @@ const textStyle = ({ variant }: LabelProps) => {
       text-transform: uppercase;
     `,
     body: css`
-      font-size: 26px;
+      font-size: 18px;
     `,
   };
 

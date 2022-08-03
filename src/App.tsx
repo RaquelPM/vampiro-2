@@ -4,14 +4,14 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 
 import { Routes } from './routes';
-import { StylesProvider } from './styles';
+import { ThemesProvider } from './styles';
 
 export const App = () => {
   return (
     <NavigationContainer>
-      <StylesProvider>
+      <ThemesProvider>
         <Routes />
-      </StylesProvider>
+      </ThemesProvider>
     </NavigationContainer>
   );
 };
