@@ -4,12 +4,6 @@ import { RectButton } from 'react-native-gesture-handler';
 
 import { Button, Typography } from '~/components';
 
-const containerAttrs = () => ({
-  contentContainerStyle: {
-    flex: 1,
-  },
-});
-
 export const Container = styled.View`
   width: 100%;
   height: 100%;
@@ -26,9 +20,22 @@ export const ListWrapper = styled.View`
   width: 100%;
 `;
 
+const containerAttrs = () => ({
+  contentContainerStyle: {
+    flex: 1,
+  },
+});
+
 export const List = styled(DraggableFlatList).attrs(containerAttrs)`
   width: 100%;
   height: 100%;
+`;
+
+export const EmptyListLabel = styled(Typography)`
+  flex: 1;
+
+  color: white;
+  text-align: center;
 `;
 
 export const AddBtn = styled(RectButton)`

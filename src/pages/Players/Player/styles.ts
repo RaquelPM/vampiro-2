@@ -1,16 +1,18 @@
 import styled from 'styled-components/native';
+import { Pressable } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { RectButton } from 'react-native-gesture-handler';
 
 import { Typography } from '~/components';
 
-export const Container = styled.Pressable`
+export const Container = styled(Animated.createAnimatedComponent(Pressable))`
   align-self: center;
 
   margin: 10px 0;
 
   width: ${p => 0.75 * p.theme.window.width}px;
   height: 64px;
+  overflow: hidden;
 
   align-items: center;
   justify-content: center;

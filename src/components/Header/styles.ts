@@ -1,5 +1,4 @@
 import styled from 'styled-components/native';
-import { TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 import { Typography } from '../Typography';
@@ -14,7 +13,7 @@ export const Container = styled.View`
   justify-content: center;
 `;
 
-export const BackBtn = styled(TouchableOpacity)`
+export const BackBtn = styled.TouchableOpacity`
   margin: 0 0 0 30px;
 `;
 
