@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { TextInput } from 'react-native';
+import React, { useEffect, useState } from 'react';
 
 import {
   ButtonLabel,
@@ -30,8 +29,6 @@ export const PlayerInput = ({
 }: PlayerInputProps) => {
   const [name, setName] = useState('');
 
-  const inputRef = useRef<TextInput>(null);
-
   useEffect(() => {
     setName(editName || '');
   }, [visible]);
@@ -40,7 +37,6 @@ export const PlayerInput = ({
     <Container visible={visible} onClose={onClose}>
       <Label>{editName ? 'Editar jogador:' : 'Adicionar jogador:'}</Label>
       <Input
-        ref={inputRef}
         value={name}
         onChangeText={setName}
         placeholder="Nome do jogador"

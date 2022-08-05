@@ -1,10 +1,11 @@
 import styled from 'styled-components/native';
-import DraggableFlatList from 'react-native-draggable-flatlist';
+import { View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { RectButton } from 'react-native-gesture-handler';
 
 import { Button, Typography } from '~/components';
 
-export const Container = styled.View`
+export const Container = styled(View)`
   width: 100%;
   height: 100%;
   background: ${p => p.theme.colors.dark};
@@ -12,7 +13,7 @@ export const Container = styled.View`
   align-items: center;
 `;
 
-export const ListWrapper = styled.View`
+export const ListWrapper = styled(View)`
   flex: 1;
 
   padding: 10px 0;
@@ -20,13 +21,21 @@ export const ListWrapper = styled.View`
   width: 100%;
 `;
 
-const containerAttrs = () => ({
+export type ListProps = {
+  length: number;
+};
+
+const containerAttrs = ({ length }: ListProps) => ({
   contentContainerStyle: {
-    flex: 1,
+    width: '100%',
+    minHeight: '100%',
+    height: length * 84 + 20,
   },
 });
 
-export const List = styled(DraggableFlatList).attrs(containerAttrs)`
+export const List = styled(Animated.ScrollView).attrs(
+  containerAttrs
+)<ListProps>`
   width: 100%;
   height: 100%;
 `;

@@ -1,4 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
+import { LayoutChangeEvent } from 'react-native';
+import Animated, {
+  useAnimatedRef,
+  useAnimatedScrollHandler,
+  useSharedValue,
+} from 'react-native-reanimated';
 import { StackScreenProps } from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
@@ -8,95 +14,103 @@ import {
   NextBtn,
   Container,
   EmptyListLabel,
-  ListWrapper,
   AddBtn,
   AddLabel,
+  List,
+  ListWrapper,
 } from './styles';
 import { Player } from './Player';
 import { PlayerInput } from './PlayerInput';
+import { PlayerData, usePlayers } from './hooks';
 
 export type PlayersProps = StackScreenProps<NavigationScreens, 'Players'>;
 
-type PlayerData = {
-  name: string;
-  key: number;
-};
-
 export const Players = () => {
-  const [players, setPlayers] = useState<PlayerData[]>([]);
+  const {
+    players,
+    positions,
+    createPlayer,
+    editPlayer,
+    deletePlayer,
+    swapPlayers,
+  } = usePlayers();
+
   const [playerInput, setPlayerInput] = useState(false);
-  const [editPlayer, setEditPlayer] = useState<PlayerData | null>(null);
+  const [selected, setSelected] = useState<PlayerData | null>(null);
 
-  const id = useRef(0);
+  const scroll = useSharedValue(0);
+  const scrollHeight = useSharedValue(0);
 
-  const handleAddPlayer = (name: string) => {
-    if (editPlayer) {
-      setPlayers(prev => {
-        const list = prev.map(item => {
-          return item.key !== editPlayer.key
-            ? item
-            : {
-                ...item,
-                name,
-              };
-        });
+  const scrollRef = useAnimatedRef<Animated.ScrollView>();
 
-        return list;
-      });
+  const onScroll = useAnimatedScrollHandler(e => {
+    scroll.value = e.contentOffset.y;
+  });
 
-      setEditPlayer(null);
+  const onScrollLayout = (e: LayoutChangeEvent) => {
+    scrollHeight.value = e.nativeEvent.layout.height;
+  };
+
+  const onSubmitPlayer = (name: string) => {
+    if (selected) {
+      editPlayer(selected.id, name);
+
+      setSelected(null);
 
       return;
     }
 
-    setPlayers(prev => {
-      return [
-        ...prev,
-        {
-          name,
-          key: id.current,
-        },
-      ];
-    });
-
-    id.current += 1;
+    createPlayer(name);
 
     setPlayerInput(false);
   };
 
-  const handleRemovePlayer = () => {
-    setPlayers(prev => {
-      return prev.filter(item => item.key !== editPlayer?.key);
-    });
+  const onDeletePlayer = () => {
+    if (!selected) {
+      return;
+    }
 
-    setEditPlayer(null);
+    deletePlayer(selected.id);
+
+    setSelected(null);
   };
 
   return (
     <Container>
       <PlayerInput
-        visible={playerInput || !!editPlayer}
-        editName={editPlayer?.name}
-        onClose={() => [setPlayerInput(false), setEditPlayer(null)]}
-        onSubmit={handleAddPlayer}
-        onDelete={handleRemovePlayer}
+        visible={playerInput || !!selected}
+        editName={selected?.name}
+        onClose={() => [setSelected(null), setPlayerInput(false)]}
+        onSubmit={onSubmitPlayer}
+        onDelete={onDeletePlayer}
       />
       <ListWrapper>
-        {players.length === 0 && (
-          <EmptyListLabel>
-            Ainda não há nenhum jogador adicionado.
-          </EmptyListLabel>
-        )}
-        {players.map(item => (
-          <Player
-            key={item.key}
-            id={item.key}
-            name={item.name}
-            drag={() => null}
-            isActive={false}
-            onPress={() => setEditPlayer(item)}
-          />
-        ))}
+        <List
+          ref={scrollRef}
+          length={players.length}
+          onScroll={onScroll}
+          onLayout={onScrollLayout}
+        >
+          {players.length === 0 && (
+            <EmptyListLabel>
+              Ainda não há nenhum jogador adicionado.
+            </EmptyListLabel>
+          )}
+          {players.map(item => (
+            <Player
+              id={item.id}
+              key={item.id}
+              name={item.name}
+              length={players.length}
+              scroll={scroll}
+              scrollRef={scrollRef}
+              scrollHeight={scrollHeight}
+              positions={positions}
+              onPress={() => setSelected(item)}
+              onShift={target => swapPlayers(positions.value[item.id], target)}
+            />
+          ))}
+        </List>
       </ListWrapper>
       <AddBtn onPress={() => setPlayerInput(true)}>
         <AddLabel>Adicionar Jogador</AddLabel>
