@@ -1,10 +1,10 @@
 import React from 'react';
 import { TextProps } from 'react-native';
+import { AnimateProps } from 'react-native-reanimated';
 
 import { Label } from './styles';
 
-export type TypographyProps = TextProps & {
-  children?: string;
+export type TypographyProps = AnimateProps<TextProps> & {
   variant?: 'title' | 'button' | 'body';
 };
 

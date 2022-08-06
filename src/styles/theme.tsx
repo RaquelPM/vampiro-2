@@ -7,6 +7,8 @@ export const theme = {
     primary: '#266AAB',
     accent: '#E2213E',
     dark: '#081E2A',
+    gray: '#767676',
+    darkGray: '#343434',
   },
   window: {
     width: 1000,

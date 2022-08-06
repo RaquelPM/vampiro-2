@@ -13,10 +13,8 @@ export const Container = styled(Animated.View)<ContainerProps>`
   position: absolute;
   align-self: center;
 
-  margin: 10px 0;
-
   width: 100%;
-  height: 64px;
+  height: 84px;
 
   align-items: center;
   justify-content: center;
@@ -28,7 +26,7 @@ export const Wrapper = styled(AnimatedRectButton)`
   padding: 0 0 0 21px;
 
   width: 75%;
-  height: 100%;
+  height: 64px;
   min-width: 250px;
   background: white;
   border-radius: 5px;

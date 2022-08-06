@@ -26,7 +26,8 @@ const buttonWidth = ({ size }: ContainerProps) => {
 export const Container = styled(AnimatedRectButton)<ContainerProps>`
   ${buttonWidth};
   height: 64px;
-  background: ${p => p.theme.colors.primary};
+  background: ${p =>
+    p.enabled ? p.theme.colors.primary : p.theme.colors.gray};
   border-radius: 5px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   elevation: 5;
@@ -35,6 +36,11 @@ export const Container = styled(AnimatedRectButton)<ContainerProps>`
   justify-content: center;
 `;
 
-export const Label = styled(Typography)`
+export type LabelProps = {
+  enabled: boolean;
+};
+
+export const Label = styled(Typography)<LabelProps>`
+  color: ${p => (p.enabled ? 'white' : p.theme.colors.darkGray)};
   text-align: center;
 `;

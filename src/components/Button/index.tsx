@@ -5,18 +5,21 @@ import { RectButtonProps } from 'react-native-gesture-handler';
 import { Container, Label } from './styles';
 
 export type ButtonProps = AnimateProps<RectButtonProps> & {
-  children?: string;
+  children?: React.ReactNode;
   size?: 'regular' | 'large';
 };
 
 export const Button = ({
   children,
   size = 'regular',
+  enabled = true,
   ...rest
 }: ButtonProps) => {
   return (
-    <Container size={size} {...rest}>
-      <Label variant="button">{children}</Label>
+    <Container size={size} enabled={enabled} {...rest}>
+      <Label enabled={!!enabled} variant="button">
+        {children}
+      </Label>
     </Container>
   );
 };

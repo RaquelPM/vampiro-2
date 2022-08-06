@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components/native';
+import Animated from 'react-native-reanimated';
 
 export type LabelProps = {
   variant: 'title' | 'button' | 'body';
@@ -22,7 +23,7 @@ const textStyle = ({ variant }: LabelProps) => {
   return variants[variant];
 };
 
-export const Label = styled.Text<LabelProps>`
+export const Label = styled(Animated.Text)<LabelProps>`
   ${textStyle}
   color: white;
   font-family: 'Anton-Regular';

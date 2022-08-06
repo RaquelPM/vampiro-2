@@ -1,6 +1,5 @@
 import React from 'react';
 import Animated, {
-  Keyframe,
   runOnJS,
   scrollTo,
   SharedValue,
@@ -23,7 +22,7 @@ export type PlayerProps = {
   scrollHeight: SharedValue<number>;
   positions: SharedValue<Record<number, number>>;
   onPress: () => void;
-  onShift: (target: number) => void;
+  onSwap: (target: number) => void;
 };
 
 const AnimatedIcon = Animated.createAnimatedComponent(Icon);
@@ -37,35 +36,12 @@ export const Player = ({
   scrollHeight,
   positions,
   onPress,
-  onShift,
+  onSwap,
 }: PlayerProps) => {
   const index = positions.value[id];
 
-  const outStyle = {
-    opacity: 0,
-    transform: [
-      {
-        translateX: 150 * (index % 2 === 0 ? -1 : 1),
-      },
-    ],
-  };
-
-  const inStyle = {
-    opacity: 1,
-    transform: [
-      {
-        translateX: 0,
-      },
-    ],
-  };
-
-  const exiting = new Keyframe({
-    from: inStyle,
-    to: outStyle,
-  }).duration(300);
-
-  const position = useSharedValue(positions.value[id] * 84 + 10);
-  const initial = useSharedValue(positions.value[id]);
+  const position = useSharedValue(positions.value[id] * 84 || 0);
+  const initial = useSharedValue(position.value);
   const active = useSharedValue(false);
 
   useAnimatedReaction(
@@ -94,7 +70,15 @@ export const Player = ({
         (overflow ? scroll.value + scrollHeight.value : scrollHeight.value) -
         84;
 
-      if (y < 0 || y > Math.max(scrollHeight.value, length * 84) - 84) {
+      if (y < 0) {
+        position.value = 0;
+
+        return;
+      }
+
+      if (y + 84 > Math.max(scrollHeight.value, length * 84)) {
+        position.value = Math.max(scrollHeight.value, length * 84) - 84;
+
         return;
       }
 
@@ -106,10 +90,10 @@ export const Player = ({
         scrollTo(scrollRef, 0, scroll.value + y - max + 104, false);
       }
 
-      const newIndex = Math.round((y - 10) / 84);
+      const newIndex = Math.round(y / 84);
 
       if (newIndex !== positions.value[id]) {
-        runOnJS(onShift)(newIndex);
+        runOnJS(onSwap)(newIndex);
       }
 
       position.value = y;
@@ -133,11 +117,11 @@ export const Player = ({
 
   return (
     <Container index={index} style={dragStyle}>
-      <Wrapper rippleColor="#9994" onPress={onPress} exiting={exiting}>
+      <Wrapper rippleColor="#9994" onPress={onPress}>
         <Label>{name}</Label>
-        <GestureDetector gesture={Gesture.Simultaneous(drag)}>
+        <GestureDetector gesture={drag}>
           <IconWrapper>
-            <AnimatedIcon name="menu" size={20} style={iconStyle} />
+            <AnimatedIcon name="menu" size={22} style={iconStyle} />
           </IconWrapper>
         </GestureDetector>
       </Wrapper>

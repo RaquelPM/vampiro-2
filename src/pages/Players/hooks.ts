@@ -1,17 +1,25 @@
 import { useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 
+import { useLocal } from '~/hooks';
+
 export type PlayerData = {
   id: number;
   name: string;
 };
 
 export const usePlayers = () => {
-  const [players, setPlayers] = useState<PlayerData[]>([]);
+  const local = useLocal();
 
-  const id = useRef(0);
+  const [players, setPlayers] = useState(local.players);
 
-  const positions = useSharedValue<Record<number, number>>({});
+  const id = useRef(players.length);
+
+  const positions = useSharedValue<Record<number, number>>(
+    players.reduce((acc, curr, index) => {
+      return { ...acc, [curr.id]: index };
+    }, {})
+  );
 
   const createPlayer = (name: string) => {
     positions.value = {
@@ -93,6 +101,14 @@ export const usePlayers = () => {
     positions.value = newPositions;
   };
 
+  const savePlayers = async () => {
+    const ordered = players.sort(
+      (a, b) => positions.value[a.id] - positions.value[b.id]
+    );
+
+    await local.savePlayers(ordered);
+  };
+
   return {
     players,
     positions,
@@ -100,5 +116,6 @@ export const usePlayers = () => {
     editPlayer,
     deletePlayer,
     swapPlayers,
+    savePlayers,
   };
 };

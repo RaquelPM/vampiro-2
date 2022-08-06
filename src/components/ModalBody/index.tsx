@@ -8,7 +8,12 @@ export type ModalBodyProps = ViewProps & {
   onClose?: () => void;
 };
 
-export const ModalBody = ({ visible, onClose, ...rest }: ModalBodyProps) => {
+export const ModalBody = ({
+  children,
+  visible,
+  onClose,
+  ...rest
+}: ModalBodyProps) => {
   return (
     <>
       <Modal
@@ -26,7 +31,7 @@ export const ModalBody = ({ visible, onClose, ...rest }: ModalBodyProps) => {
         animationType="slide"
       >
         <Container>
-          <Body {...rest}></Body>
+          <Body {...rest}>{children}</Body>
         </Container>
       </Modal>
     </>

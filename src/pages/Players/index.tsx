@@ -25,7 +25,7 @@ import { PlayerData, usePlayers } from './hooks';
 
 export type PlayersProps = StackScreenProps<NavigationScreens, 'Players'>;
 
-export const Players = () => {
+export const Players = ({ navigation }: PlayersProps) => {
   const {
     players,
     positions,
@@ -33,6 +33,7 @@ export const Players = () => {
     editPlayer,
     deletePlayer,
     swapPlayers,
+    savePlayers,
   } = usePlayers();
 
   const [playerInput, setPlayerInput] = useState(false);
@@ -75,6 +76,12 @@ export const Players = () => {
     setSelected(null);
   };
 
+  const onGoToNext = async () => {
+    await savePlayers();
+
+    navigation.navigate('More');
+  };
+
   return (
     <Container>
       <PlayerInput
@@ -107,7 +114,7 @@ export const Players = () => {
               scrollHeight={scrollHeight}
               positions={positions}
               onPress={() => setSelected(item)}
-              onShift={target => swapPlayers(positions.value[item.id], target)}
+              onSwap={target => swapPlayers(positions.value[item.id], target)}
             />
           ))}
         </List>
@@ -116,7 +123,9 @@ export const Players = () => {
         <AddLabel>Adicionar Jogador</AddLabel>
         <Icon name="plus" color="white" size={20} />
       </AddBtn>
-      <NextBtn size="large">Prosseguir</NextBtn>
+      <NextBtn size="large" onPress={onGoToNext}>
+        Prosseguir
+      </NextBtn>
     </Container>
   );
 };

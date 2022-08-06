@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { Pressable, TextInput, View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { RectButton } from 'react-native-gesture-handler';
 
 import { ModalBody, Typography } from '~/components';
@@ -39,7 +40,9 @@ export const ErasePressArea = styled(Pressable)`
   margin: 0 10px 0 0;
 `;
 
-export const EraseBtn = styled(RectButton)`
+const AnimatedRectButton = Animated.createAnimatedComponent(RectButton);
+
+export const EraseBtn = styled(AnimatedRectButton)`
   flex: 1;
 
   background: ${p => p.theme.colors.accent};
@@ -53,9 +56,7 @@ export const ConfirmPressArea = styled(ErasePressArea)`
   margin: 0;
 `;
 
-export const ConfirmBtn = styled(EraseBtn)`
-  background: ${p => p.theme.colors.primary};
-`;
+export const ConfirmBtn = styled(EraseBtn)``;
 
 export const ButtonLabel = styled(Typography)`
   color: white;
