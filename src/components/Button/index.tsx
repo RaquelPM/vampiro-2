@@ -16,7 +16,12 @@ export const Button = ({
   ...rest
 }: ButtonProps) => {
   return (
-    <Container size={size} enabled={enabled} {...rest}>
+    <Container
+      size={size}
+      enabled={enabled}
+      testID="button-component"
+      {...rest}
+    >
       <Label enabled={!!enabled} variant="button">
         {children}
       </Label>

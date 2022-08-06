@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const storePlayers = (players: string[]) => {
   return AsyncStorage.setItem('vampiro@players', JSON.stringify(players));
