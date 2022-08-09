@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export const getStyle = (
   style: undefined | Record<string, any> | Record<string, any>[]
 ) => {
