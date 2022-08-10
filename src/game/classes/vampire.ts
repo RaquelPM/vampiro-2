@@ -1,7 +1,11 @@
+import { vampireImg } from '~/assets/classes';
+
 import { createClass } from './createClass';
 
 export const vampire = createClass('vampire', {
   name: 'Vampiro',
+
+  image: vampireImg,
 
   setup() {
     return {
@@ -30,5 +34,18 @@ export const vampire = createClass('vampire', {
     if (killedVamp !== -1) {
       game.players[killedVamp].dead = true;
     }
+  },
+
+  render(game) {
+    return {
+      playerInfo: {
+        instruction: 'Vote em alguém para morrer esta noite',
+      },
+      playersList: {
+        filter: item => game.selectedPlayer !== -1 || item.index > 0,
+        columnsStyle: game.selectedPlayer !== -1 ? 'single' : 'double',
+        asideTextExtractor: () => String(0),
+      },
+    };
   },
 });

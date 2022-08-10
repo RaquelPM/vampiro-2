@@ -79,7 +79,7 @@ export const Players = ({ navigation }: PlayersProps) => {
   const onGoToNext = async () => {
     await savePlayers();
 
-    navigation.navigate('More');
+    navigation.navigate('Game');
   };
 
   return (

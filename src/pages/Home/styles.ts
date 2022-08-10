@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 import Animated from 'react-native-reanimated';
 
-import LogoImg from '~/assets/icons/logo.svg';
+import { LogoImg } from '~/assets/icons';
 import { Button, SvgBackground } from '~/components';
 
 export const Container = styled(SvgBackground)`

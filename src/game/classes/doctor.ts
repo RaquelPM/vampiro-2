@@ -1,7 +1,11 @@
+import { doctorImg } from '~/assets/classes';
+
 import { createClass } from './createClass';
 
 export const doctor = createClass('doctor', {
   name: 'Médico',
+
+  image: doctorImg,
 
   rules: {
     maxInstances: 2,
@@ -23,5 +27,13 @@ export const doctor = createClass('doctor', {
     if (protectedDoc.has(killedVamp)) {
       game.global.killedVamp = -1;
     }
+  },
+
+  render() {
+    return {
+      playerInfo: {
+        instruction: 'Selecione alguém para proteger esta noite',
+      },
+    };
   },
 });

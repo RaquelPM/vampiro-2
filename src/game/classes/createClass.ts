@@ -1,4 +1,8 @@
-import { Game } from '../context';
+import { FC } from 'react';
+import { SvgProps } from 'react-native-svg';
+
+import { Game } from '..';
+import { Components } from '../components';
 
 export type PlayerProps = {
   name: string;
@@ -7,9 +11,18 @@ export type PlayerProps = {
 
 export type ClassProps = {
   name: string;
+  image: FC<SvgProps>;
   rules?: {
     maxInstances?: number;
     singleInstance?: boolean;
+  };
+};
+
+export type Player<T> = PlayerProps & {
+  dead: boolean;
+  local: T;
+  class: ClassProps & {
+    key: string;
   };
 };
 
@@ -29,14 +42,22 @@ export type CreateClassParams<
   beforeEachDay?: EventFunction;
   afterEachDay?: EventFunction;
   betweenDayAndNight?: EventFunction;
+  render: (
+    game: Game,
+    player: Player<P>
+  ) => {
+    playerInfo: {
+      instruction: string;
+    } & Partial<Omit<Components['playerInfo'], 'instruction'>>;
+  } & Partial<Omit<Components, 'playerInfo'>>;
 };
 
 export function createClass<
   K extends string,
   S extends ExtraProps,
   P extends ExtraProps
->(key: K, { name, rules, ...methods }: CreateClassParams<S, P>) {
-  return class Class {
+>(key: K, { name, image, rules, ...methods }: CreateClassParams<S, P>) {
+  return class Class implements Player<P> {
     static key = key;
 
     static displayName = name;
@@ -65,6 +86,7 @@ export function createClass<
       this.class = {
         key,
         name,
+        image,
         rules,
       };
     }
@@ -119,6 +141,22 @@ export function createClass<
       if (methods.betweenDayAndNight) {
         methods.betweenDayAndNight(game);
       }
+    }
+
+    render(
+      game: Game
+    ): Partial<Components> & { playerInfo: Components['playerInfo'] } {
+      const tree = methods.render(game, this);
+
+      return {
+        ...tree,
+        playerInfo: {
+          classImg: this.class.image,
+          playerName: this.name,
+          className: this.class.name,
+          ...tree.playerInfo,
+        },
+      };
     }
   };
 }

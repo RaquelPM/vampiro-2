@@ -11,3 +11,5 @@ export const classes = {
 export type Classes = typeof classes;
 
 export type ClassKeys = keyof Classes;
+
+export * from './createClass';
