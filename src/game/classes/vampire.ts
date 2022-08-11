@@ -1,6 +1,5 @@
 import { vampireImg } from '~/assets/classes';
 
-import { vampirePlayersList } from '../plugins';
 import { createClass } from './createClass';
 
 export type VampireProps = {
@@ -11,6 +10,8 @@ export type VampireProps = {
 };
 
 export const Vampire = createClass('vampire', {
+  preset: 'vampire',
+
   name: 'Vampiro',
 
   image: vampireImg,
@@ -50,11 +51,9 @@ export const Vampire = createClass('vampire', {
         instruction: 'Vote em alguém para morrer esta noite',
       },
 
-      playersList: vampirePlayersList(game, {}),
-
       buttons: {
         onConfirm: () => {
-          game.vars.votesVamp[game.selectedPlayer] += 1;
+          game.vars.votesVamp[game.selectedIndex] += 1;
         },
       },
     };

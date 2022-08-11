@@ -22,7 +22,7 @@ export type PlayerListProps = {
   asideImageExtractor?: (
     item: Player<Record<never, never>>,
     index: number
-  ) => React.FC<SvgProps> | undefined;
+  ) => React.FC<SvgProps> | null;
 };
 
 export const PlayerList = ({
@@ -47,7 +47,7 @@ export const PlayerList = ({
   }, [players]);
 
   const selectPlayer = (index: number) => {
-    game.selectedPlayer = index === game.selectedPlayer ? -1 : index;
+    game.selectedIndex = index === game.selectedIndex ? -1 : index;
   };
 
   const containerStyle = useAnimatedStyle(() => ({
@@ -69,7 +69,7 @@ export const PlayerList = ({
         <Card
           key={item.index}
           name={item.name}
-          selected={game.selectedPlayer === item.index}
+          selected={game.selectedIndex === item.index}
           position={index}
           last={index === game.players.length - 1}
           size={columnsStyle === 'single' ? 'large' : 'small'}

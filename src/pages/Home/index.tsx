@@ -7,9 +7,9 @@ import { NavigationScreens } from '~/types';
 
 import { Container, InitBtn, Logo, LogoWrapper, MoreBtn } from './styles';
 
-export type HomeProps = StackScreenProps<NavigationScreens, 'Home'>;
+export type HomeScreenProps = StackScreenProps<NavigationScreens, 'Home'>;
 
-export const Home = ({ navigation }: HomeProps) => {
+export const Home = ({ navigation }: HomeScreenProps) => {
   return (
     <Container src={NightBackground}>
       <LogoWrapper entering={BounceInUp.delay(1500).duration(1000)}>

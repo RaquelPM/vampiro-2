@@ -9,6 +9,8 @@ export type DoctorProps = {
 };
 
 export const Doctor = createClass('doctor', {
+  preset: 'citizen',
+
   name: 'Médico',
 
   image: doctorImg,
@@ -45,7 +47,7 @@ export const Doctor = createClass('doctor', {
 
       buttons: {
         onConfirm: () => {
-          game.vars.protectedDoc.add(game.selectedPlayer);
+          game.vars.protectedDoc.add(game.selectedIndex);
         },
       },
     };

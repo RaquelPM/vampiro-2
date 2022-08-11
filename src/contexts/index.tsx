@@ -10,4 +10,5 @@ export const ContextProvider = ({
   return <LocalProvider>{children}</LocalProvider>;
 };
 
+export * from './game';
 export * from './local';

@@ -11,13 +11,23 @@ export type ButtonsProps = {
 
 export const Buttons = ({
   game,
-  enabled = game.selectedPlayer !== -1,
+  enabled = game.selectedIndex !== -1,
   confirmText = 'Prosseguir',
   onConfirm,
 }: GameComponent<ButtonsProps>) => {
+  const onPress = () => {
+    if (onConfirm) {
+      onConfirm();
+    }
+
+    game.nextTurn();
+
+    game.selectedIndex = -1;
+  };
+
   return (
     <Container>
-      <ConfirmBtn enabled={enabled} onPress={onConfirm}>
+      <ConfirmBtn enabled={enabled} onPress={onPress}>
         {confirmText}
       </ConfirmBtn>
     </Container>

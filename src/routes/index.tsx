@@ -4,9 +4,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { useTheme } from 'styled-components';
 
 import { Header } from '~/components';
-import { Game, Home, More, Players } from '~/pages';
+import { Home, More, Players } from '~/pages';
 import { NavigationScreens } from '~/types';
 import { navigateAnimation } from '~/utils';
+
+import { GameRoutes } from './game';
 
 export const Stack = createStackNavigator<NavigationScreens>();
 
@@ -30,7 +32,7 @@ export const Routes = () => {
           component={Players}
           options={{ headerShown: true, headerTitle: 'Jogadores' }}
         />
-        <Stack.Screen name="Game" component={Game} />
+        <Stack.Screen name="Game" component={GameRoutes} />
       </Stack.Navigator>
     </>
   );

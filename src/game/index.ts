@@ -11,15 +11,23 @@ export type Player = InstanceType<Classes[ClassKeys]>;
 export class Game {
   players: Player[];
 
+  turn: number;
+
   vars: Vars;
 
   private reactive: {
-    selectedPlayer: number;
-    setSelectedPlayer: Dispatch<SetStateAction<number>>;
+    selectedIndex: number;
+    setSelectedIndex: Dispatch<SetStateAction<number>>;
   };
 
-  constructor(players: string[]) {
+  constructor(
+    players: string[],
+    private listeners: {
+      onNextTurn?: (turn: number) => void;
+    } = {}
+  ) {
     this.players = players.map(() => ({} as Player));
+    this.turn = 0;
     this.vars = {} as Vars;
     this.reactive = {} as any;
 
@@ -56,6 +64,18 @@ export class Game {
     });
   }
 
+  private shuffledForEachClass(cb: (item: Classes[ClassKeys]) => void) {
+    const keys = Object.keys(classes) as ClassKeys[];
+
+    while (keys.length > 0) {
+      const random = getRandomInteger(0, keys.length);
+
+      const [key] = keys.splice(random, 1);
+
+      cb(classes[key]);
+    }
+  }
+
   private shuffledForEachPlayer(cb: (item: Player, index: number) => void) {
     const indexes = this.players.map((item, index) => index);
 
@@ -69,42 +89,64 @@ export class Game {
   }
 
   beforeEachNight() {
-    this.forEachClass(item => item.beforeEachNight(this));
+    this.shuffledForEachClass(item => item.beforeEachNight(this));
   }
 
   afterEachNight() {
-    this.forEachClass(item => item.afterEachNight(this));
+    this.shuffledForEachClass(item => item.afterEachNight(this));
 
-    this.forEachClass(item => item.betweenNightAndDay(this));
+    this.shuffledForEachClass(item => item.betweenNightAndDay(this));
   }
 
   beforeEachDay() {
-    this.forEachClass(item => item.beforeEachDay(this));
+    this.shuffledForEachClass(item => item.beforeEachDay(this));
   }
 
   afterEachDay() {
-    this.forEachClass(item => item.afterEachDay(this));
+    this.shuffledForEachClass(item => item.afterEachDay(this));
 
-    this.forEachClass(item => item.betweenDayAndNight(this));
+    this.shuffledForEachClass(item => item.betweenDayAndNight(this));
+  }
+
+  nextTurn() {
+    const turn = this.players.findIndex(
+      item => item.index > this.turn && !item.dead
+    );
+
+    if (turn !== -1) {
+      this.turn = turn;
+
+      if (this.listeners.onNextTurn) {
+        this.listeners.onNextTurn(turn);
+      }
+    }
   }
 
   useReactive() {
-    const [selectedPlayer, setSelectedPlayer] = useState(-1);
+    const [selectedIndex, setSelectedIndex] = useState(-1);
 
     this.reactive = {
-      selectedPlayer,
-      setSelectedPlayer,
+      selectedIndex,
+      setSelectedIndex,
     };
 
-    return { selectedPlayer, setSelectedPlayer };
+    return { selectedIndex, setSelectedIndex };
+  }
+
+  get selectedIndex() {
+    return this.reactive.selectedIndex;
+  }
+
+  set selectedIndex(value: number) {
+    this.reactive.setSelectedIndex(value);
   }
 
   get selectedPlayer() {
-    return this.reactive.selectedPlayer;
+    return this.players[this.selectedIndex];
   }
 
-  set selectedPlayer(value: number) {
-    this.reactive.setSelectedPlayer(value);
+  get currentPlayer() {
+    return this.players[this.turn];
   }
 }
 

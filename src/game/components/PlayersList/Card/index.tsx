@@ -16,7 +16,7 @@ export type CardProps = {
   position: number;
   last: boolean;
   asideText?: string;
-  asideImage?: React.FC<SvgProps>;
+  asideImage?: React.FC<SvgProps> | null;
   onPress: () => void;
 };
 
@@ -37,7 +37,7 @@ export const Card = memo(
       size === 'large' ? window.width - 60 : window.width / 2 - 40
     );
     const top = useSharedValue(0);
-    const left = useSharedValue(0);
+    const left = useSharedValue(30);
 
     useEffect(() => {
       const leftForOdd = size === 'small' && last ? window.width / 4 + 20 : 30;

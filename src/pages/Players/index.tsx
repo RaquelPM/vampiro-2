@@ -23,9 +23,9 @@ import { Player } from './Player';
 import { PlayerInput } from './PlayerInput';
 import { PlayerData, usePlayers } from './hooks';
 
-export type PlayersProps = StackScreenProps<NavigationScreens, 'Players'>;
+export type PlayersScreenProps = StackScreenProps<NavigationScreens, 'Players'>;
 
-export const Players = ({ navigation }: PlayersProps) => {
+export const Players = ({ navigation }: PlayersScreenProps) => {
   const {
     players,
     positions,
@@ -79,7 +79,9 @@ export const Players = ({ navigation }: PlayersProps) => {
   const onGoToNext = async () => {
     await savePlayers();
 
-    navigation.navigate('Game');
+    navigation.navigate('Game', {
+      screen: 'Playing',
+    });
   };
 
   return (
