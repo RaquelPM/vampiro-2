@@ -1,21 +1,17 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 
 import { getRandomInteger } from '~/utils';
-import type { UnionToIntersection } from '~/types';
 
 import type { Classes, ClassKeys } from './classes';
 import { classes } from './classes';
-
-export type Global = UnionToIntersection<
-  ReturnType<Classes[ClassKeys]['setup']>
->;
+import { Vars } from './types';
 
 export type Player = InstanceType<Classes[ClassKeys]>;
 
 export class Game {
   players: Player[];
 
-  global: Global;
+  vars: Vars;
 
   private reactive: {
     selectedPlayer: number;
@@ -24,13 +20,13 @@ export class Game {
 
   constructor(players: string[]) {
     this.players = players.map(() => ({} as Player));
-    this.global = {} as Global;
+    this.vars = {} as Vars;
     this.reactive = {} as any;
 
     this.forEachClass(item => {
-      this.global = {
-        ...this.global,
-        ...item.setup(),
+      this.vars = {
+        ...this.vars,
+        ...item.setupVars(),
       };
     });
 

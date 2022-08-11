@@ -1,11 +1,11 @@
-import { doctor } from './doctor';
-import { seer } from './seer';
-import { vampire } from './vampire';
+import { Doctor } from './doctor';
+import { Seer } from './seer';
+import { Vampire } from './vampire';
 
 export const classes = {
-  doctor,
-  seer,
-  vampire,
+  doctor: Doctor,
+  seer: Seer,
+  vampire: Vampire,
 };
 
 export type Classes = typeof classes;
@@ -13,3 +13,6 @@ export type Classes = typeof classes;
 export type ClassKeys = keyof Classes;
 
 export * from './createClass';
+export * from './doctor';
+export * from './seer';
+export * from './vampire';

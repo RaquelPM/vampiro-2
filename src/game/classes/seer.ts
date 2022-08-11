@@ -2,7 +2,9 @@ import { seerImg } from '~/assets/classes';
 
 import { createClass } from './createClass';
 
-export const seer = createClass('seer', {
+export type SeerProps = Record<string, never>;
+
+export const Seer = createClass('seer', {
   name: 'Vidente',
 
   image: seerImg,
@@ -16,6 +18,7 @@ export const seer = createClass('seer', {
       playerInfo: {
         instruction: 'Selecione alguém para ver sua classe',
       },
+      playersList: {},
     };
   },
 });

@@ -4,6 +4,7 @@ import {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { SvgProps } from 'react-native-svg';
 
 import { Player } from '~/game/classes';
 
@@ -18,6 +19,10 @@ export type PlayerListProps = {
     item: Player<Record<never, never>>,
     index: number
   ) => string;
+  asideImageExtractor?: (
+    item: Player<Record<never, never>>,
+    index: number
+  ) => React.FC<SvgProps> | undefined;
 };
 
 export const PlayerList = ({
@@ -25,6 +30,7 @@ export const PlayerList = ({
   filter,
   columnsStyle = 'double',
   asideTextExtractor,
+  asideImageExtractor,
 }: GameComponent<PlayerListProps>) => {
   const height = useSharedValue(0);
 
@@ -33,6 +39,12 @@ export const PlayerList = ({
       (item, index) => !item.dead && (!filter || filter(item, index))
     );
   }, [game.players]);
+
+  const images = useMemo(() => {
+    return players.map(
+      (item, index) => asideImageExtractor && asideImageExtractor(item, index)
+    );
+  }, [players]);
 
   const selectPlayer = (index: number) => {
     game.selectedPlayer = index === game.selectedPlayer ? -1 : index;
@@ -46,7 +58,7 @@ export const PlayerList = ({
     height.value = withTiming(
       columnsStyle === 'single'
         ? players.length * 84
-        : Math.floor(players.length / 2) * 84,
+        : Math.ceil(players.length / 2) * 84,
       { duration: 300 }
     );
   }, [columnsStyle]);
@@ -62,6 +74,7 @@ export const PlayerList = ({
           last={index === game.players.length - 1}
           size={columnsStyle === 'single' ? 'large' : 'small'}
           asideText={asideTextExtractor && asideTextExtractor(item, index)}
+          asideImage={images[index]}
           onPress={() => selectPlayer(item.index)}
         />
       ))}

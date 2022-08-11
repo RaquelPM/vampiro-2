@@ -2,7 +2,13 @@ import { doctorImg } from '~/assets/classes';
 
 import { createClass } from './createClass';
 
-export const doctor = createClass('doctor', {
+export type DoctorProps = {
+  vars: {
+    protectedDoc: Set<number>;
+  };
+};
+
+export const Doctor = createClass('doctor', {
   name: 'Médico',
 
   image: doctorImg,
@@ -11,28 +17,36 @@ export const doctor = createClass('doctor', {
     maxInstances: 2,
   },
 
-  setup() {
+  setupVars() {
     return {
       protectedDoc: new Set<number>(),
     };
   },
 
   beforeEachNight(game) {
-    game.global.protectedDoc.clear();
+    game.vars.protectedDoc.clear();
   },
 
   betweenNightAndDay(game) {
-    const { killedVamp, protectedDoc } = game.global;
+    const { killedVamp, protectedDoc } = game.vars;
 
     if (protectedDoc.has(killedVamp)) {
-      game.global.killedVamp = -1;
+      game.vars.killedVamp = -1;
     }
   },
 
-  render() {
+  render(game) {
     return {
       playerInfo: {
         instruction: 'Selecione alguém para proteger esta noite',
+      },
+
+      playersList: {},
+
+      buttons: {
+        onConfirm: () => {
+          game.vars.protectedDoc.add(game.selectedPlayer);
+        },
       },
     };
   },

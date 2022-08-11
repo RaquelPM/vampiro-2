@@ -3,6 +3,7 @@ import { SvgProps } from 'react-native-svg';
 
 import { Game } from '..';
 import { Components } from '../components';
+import { ClassesProps } from '../types';
 
 export type PlayerProps = {
   name: string;
@@ -26,16 +27,12 @@ export type Player<T> = PlayerProps & {
   };
 };
 
-type ExtraProps = Record<string, unknown>;
-
 export type EventFunction = (game: Game) => void;
 
-export type CreateClassParams<
-  S extends ExtraProps,
-  P extends ExtraProps
-> = ClassProps & {
-  setup?: () => S;
-  setupPlayer?: () => P;
+type Setup<T extends { [key: string]: () => any }> =
+  T[keyof T] extends () => Record<never, never> ? Partial<T> : Required<T>;
+
+export type CreateClassParams<K extends keyof ClassesProps> = ClassProps & {
   beforeEachNight?: EventFunction;
   afterEachNight?: EventFunction;
   betweenNightAndDay?: EventFunction;
@@ -44,20 +41,20 @@ export type CreateClassParams<
   betweenDayAndNight?: EventFunction;
   render: (
     game: Game,
-    player: Player<P>
+    player: Player<ClassesProps[K]['local']>
   ) => {
     playerInfo: {
       instruction: string;
     } & Partial<Omit<Components['playerInfo'], 'instruction'>>;
   } & Partial<Omit<Components, 'playerInfo'>>;
-};
+} & Setup<{ setupVars: () => ClassesProps[K]['vars'] }> &
+  Setup<{ setupPlayer: () => ClassesProps[K]['local'] }>;
 
-export function createClass<
-  K extends string,
-  S extends ExtraProps,
-  P extends ExtraProps
->(key: K, { name, image, rules, ...methods }: CreateClassParams<S, P>) {
-  return class Class implements Player<P> {
+export function createClass<K extends keyof ClassesProps>(
+  key: K,
+  { name, image, rules, ...methods }: CreateClassParams<K>
+) {
+  return class Class implements Player<ClassesProps[K]['local']> {
     static key = key;
 
     static displayName = name;
@@ -70,7 +67,7 @@ export function createClass<
 
     dead: boolean;
 
-    local: P;
+    local: ClassesProps[K]['local'];
 
     class: ClassProps & {
       key: K;
@@ -91,20 +88,20 @@ export function createClass<
       };
     }
 
-    static setup(): S {
-      if (methods.setup) {
-        return methods.setup();
+    static setupVars() {
+      if (methods.setupVars) {
+        return methods.setupVars();
       }
 
-      return {} as S;
+      return {} as ClassesProps[K]['vars'];
     }
 
-    static setupPlayer(): P {
+    static setupPlayer() {
       if (methods.setupPlayer) {
         return methods.setupPlayer();
       }
 
-      return {} as P;
+      return {} as ClassesProps[K]['local'];
     }
 
     static beforeEachNight(game: Game) {
@@ -150,6 +147,9 @@ export function createClass<
 
       return {
         ...tree,
+        buttons: {
+          ...tree.buttons,
+        },
         playerInfo: {
           classImg: this.class.image,
           playerName: this.name,

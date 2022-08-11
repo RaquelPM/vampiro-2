@@ -1,35 +1,43 @@
 import { vampireImg } from '~/assets/classes';
 
+import { vampirePlayersList } from '../plugins';
 import { createClass } from './createClass';
 
-export const vampire = createClass('vampire', {
+export type VampireProps = {
+  vars: {
+    killedVamp: number;
+    votesVamp: number[];
+  };
+};
+
+export const Vampire = createClass('vampire', {
   name: 'Vampiro',
 
   image: vampireImg,
 
-  setup() {
+  setupVars() {
     return {
-      votesVamp: [] as number[],
       killedVamp: -1,
+      votesVamp: [],
     };
   },
 
   beforeEachNight(game) {
-    game.global.votesVamp = game.players.map(() => 0);
+    game.vars.votesVamp = game.players.map(() => 0);
   },
 
   afterEachNight(game) {
-    const { votesVamp } = game.global;
+    const { votesVamp } = game.vars;
 
     const maxVotes = votesVamp.reduce((acc, curr) => Math.max(acc, curr), 0);
 
     const playerIndex = votesVamp.findIndex(item => item === maxVotes);
 
-    game.global.killedVamp = playerIndex;
+    game.vars.killedVamp = playerIndex;
   },
 
   beforeEachDay(game) {
-    const { killedVamp } = game.global;
+    const { killedVamp } = game.vars;
 
     if (killedVamp !== -1) {
       game.players[killedVamp].dead = true;
@@ -41,10 +49,13 @@ export const vampire = createClass('vampire', {
       playerInfo: {
         instruction: 'Vote em alguém para morrer esta noite',
       },
-      playersList: {
-        filter: item => game.selectedPlayer !== -1 || item.index > 0,
-        columnsStyle: game.selectedPlayer !== -1 ? 'single' : 'double',
-        asideTextExtractor: () => String(0),
+
+      playersList: vampirePlayersList(game, {}),
+
+      buttons: {
+        onConfirm: () => {
+          game.vars.votesVamp[game.selectedPlayer] += 1;
+        },
       },
     };
   },

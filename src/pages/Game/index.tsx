@@ -5,7 +5,11 @@ import { Container, Moon } from './styles';
 
 export const Game = () => {
   const game = useMemo(() => {
-    return new GameClass(['a', 'b', 'c']);
+    const newGame = new GameClass(['a', 'b', 'c']);
+
+    newGame.beforeEachNight();
+
+    return newGame;
   }, []);
 
   game.useReactive();

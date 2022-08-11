@@ -4,6 +4,7 @@ import {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import { SvgProps } from 'react-native-svg';
 import { useTheme } from 'styled-components';
 
 import { AsideLabel, Container, PlayerBtn, PlayerLabel } from './styles';
@@ -15,11 +16,21 @@ export type CardProps = {
   position: number;
   last: boolean;
   asideText?: string;
+  asideImage?: React.FC<SvgProps>;
   onPress: () => void;
 };
 
 export const Card = memo(
-  ({ name, size, selected, position, last, asideText, onPress }: CardProps) => {
+  ({
+    name,
+    size,
+    selected,
+    position,
+    last,
+    asideText,
+    asideImage: Image,
+    onPress,
+  }: CardProps) => {
     const { window } = useTheme();
 
     const width = useSharedValue(
@@ -58,7 +69,11 @@ export const Card = memo(
 
     return (
       <Container style={containerStyle}>
-        <AsideLabel variant="button">{asideText}</AsideLabel>
+        {Image ? (
+          <Image width={64} height={50} preserveAspectRatio="xMidYMid meet" />
+        ) : (
+          <AsideLabel variant="button">{asideText}</AsideLabel>
+        )}
         <PlayerBtn rippleColor="#9994" selected={selected} onPress={onPress}>
           <PlayerLabel selected={selected}>{name}</PlayerLabel>
         </PlayerBtn>
