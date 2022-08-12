@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSharedValue } from 'react-native-reanimated';
 
 import { useLocal } from '~/hooks';
@@ -21,12 +21,20 @@ export const usePlayers = () => {
     }, {})
   );
 
-  const createPlayer = (name: string) => {
-    positions.value = {
-      ...positions.value,
-      [id.current]: players.length,
-    };
+  useEffect(() => {
+    const newPositions: typeof positions.value = {};
 
+    players.forEach((item, index) => {
+      newPositions[item.id] =
+        typeof positions.value[item.id] === 'number'
+          ? positions.value[item.id]
+          : index;
+    });
+
+    positions.value = newPositions;
+  }, [players]);
+
+  const createPlayer = (name: string) => {
     setPlayers(prev => {
       return [
         ...prev,
@@ -56,22 +64,6 @@ export const usePlayers = () => {
   };
 
   const deletePlayer = (key: number) => {
-    const newPositions: typeof positions.value = {};
-
-    players.forEach(item => {
-      if (item.id === key) {
-        return;
-      }
-
-      if (positions.value[item.id] > positions.value[key]) {
-        newPositions[item.id] = positions.value[item.id] - 1;
-      } else {
-        newPositions[item.id] = positions.value[item.id];
-      }
-    });
-
-    positions.value = newPositions;
-
     setPlayers(prev => {
       return prev.filter(item => item.id !== key);
     });

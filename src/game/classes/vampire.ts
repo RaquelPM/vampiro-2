@@ -45,15 +45,21 @@ export const Vampire = createClass('vampire', {
     }
   },
 
-  render(game) {
+  render(game, player, done) {
     return {
       playerInfo: {
         instruction: 'Vote em alguém para morrer esta noite',
       },
 
+      playersList: {
+        vampirePreset: true,
+      },
+
       buttons: {
         onConfirm: () => {
           game.vars.votesVamp[game.selectedIndex] += 1;
+
+          done();
         },
       },
     };

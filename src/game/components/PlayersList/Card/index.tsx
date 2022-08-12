@@ -15,7 +15,7 @@ export type CardProps = {
   selected: boolean;
   position: number;
   last: boolean;
-  asideText?: string;
+  asideText?: string | number;
   asideImage?: React.FC<SvgProps> | null;
   onPress: () => void;
 };

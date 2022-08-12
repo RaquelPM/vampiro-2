@@ -6,44 +6,74 @@ import {
 } from 'react-native-reanimated';
 import { SvgProps } from 'react-native-svg';
 
-import { Player } from '~/game/classes';
+import { VampireOutlineImg } from '~/assets/icons';
+import { BasePlayer } from '~/game';
 
 import { GameComponent } from '../base';
 import { Card } from './Card';
 import { Container } from './styles';
 
 export type PlayerListProps = {
-  filter?: (item: Player<Record<never, never>>, index: number) => boolean;
-  columnsStyle?: 'single' | 'double';
-  asideTextExtractor?: (
-    item: Player<Record<never, never>>,
-    index: number
-  ) => string;
-  asideImageExtractor?: (
-    item: Player<Record<never, never>>,
-    index: number
-  ) => React.FC<SvgProps> | null;
+  vampirePreset?: boolean;
+  style?: 'basic' | 'with-aside';
+  filter?: (item: BasePlayer) => boolean;
+  extractAsideTexts?: (item: BasePlayer) => string;
+  extractAsideImages?: (item: BasePlayer) => React.FC<SvgProps> | null;
 };
 
 export const PlayerList = ({
   game,
+  vampirePreset,
+  style = vampirePreset ? 'with-aside' : 'basic',
   filter,
-  columnsStyle = 'double',
-  asideTextExtractor,
-  asideImageExtractor,
+  extractAsideTexts,
+  extractAsideImages,
 }: GameComponent<PlayerListProps>) => {
   const height = useSharedValue(0);
 
   const players = useMemo(() => {
-    return game.players.filter(
-      (item, index) => !item.dead && (!filter || filter(item, index))
-    );
+    return game.players.filter(item => {
+      if (item.dead) {
+        return false;
+      }
+
+      if (item.index === game.turn) {
+        return false;
+      }
+
+      return !filter || filter(item);
+    });
   }, [game.players]);
 
+  const texts = useMemo(() => {
+    return players.map(item => {
+      if (extractAsideTexts) {
+        return extractAsideTexts(item);
+      }
+
+      if (vampirePreset) {
+        return (
+          game.vars.votesVamp[item.index] +
+          (game.selectedIndex === item.index ? 1 : 0)
+        );
+      }
+
+      return '';
+    });
+  }, [game.selectedIndex, players]);
+
   const images = useMemo(() => {
-    return players.map(
-      (item, index) => asideImageExtractor && asideImageExtractor(item, index)
-    );
+    return players.map(item => {
+      if (extractAsideImages) {
+        return extractAsideImages(item);
+      }
+
+      if (vampirePreset) {
+        return item.class.team === 'vampire' ? VampireOutlineImg : null;
+      }
+
+      return null;
+    });
   }, [players]);
 
   const selectPlayer = (index: number) => {
@@ -56,12 +86,12 @@ export const PlayerList = ({
 
   useEffect(() => {
     height.value = withTiming(
-      columnsStyle === 'single'
+      style === 'with-aside'
         ? players.length * 84
         : Math.ceil(players.length / 2) * 84,
       { duration: 300 }
     );
-  }, [columnsStyle]);
+  }, [style]);
 
   return (
     <Container style={containerStyle}>
@@ -72,8 +102,8 @@ export const PlayerList = ({
           selected={game.selectedIndex === item.index}
           position={index}
           last={index === game.players.length - 1}
-          size={columnsStyle === 'single' ? 'large' : 'small'}
-          asideText={asideTextExtractor && asideTextExtractor(item, index)}
+          size={style === 'with-aside' ? 'large' : 'small'}
+          asideText={texts[index]}
           asideImage={images[index]}
           onPress={() => selectPlayer(item.index)}
         />

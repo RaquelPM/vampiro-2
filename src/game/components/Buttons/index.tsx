@@ -19,10 +19,6 @@ export const Buttons = ({
     if (onConfirm) {
       onConfirm();
     }
-
-    game.nextTurn();
-
-    game.selectedIndex = -1;
   };
 
   return (

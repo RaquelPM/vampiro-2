@@ -1,16 +1,20 @@
-import React, { createContext, useRef } from 'react';
+import React, { createContext } from 'react';
 
 import { Game } from '~/game';
-import { useLocal } from '~/hooks';
+import { useLocal, useOnce } from '~/hooks';
 
 export const GameContext = createContext({} as Game);
 
 export const GameProvider = ({ children }: { children: React.ReactNode }) => {
   const { players } = useLocal();
 
-  const game = useRef(new Game(players.map(item => item.name)));
+  const game = useOnce(() => {
+    const newGame = new Game(players.map(item => item.name));
 
-  return (
-    <GameContext.Provider value={game.current}>{children}</GameContext.Provider>
-  );
+    newGame.beforeEachNight();
+
+    return newGame;
+  });
+
+  return <GameContext.Provider value={game}>{children}</GameContext.Provider>;
 };

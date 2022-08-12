@@ -1,11 +1,8 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
-import { VampireOutlineImg } from '~/assets/icons';
-
 import { Game } from '..';
-import { Components } from '../components';
-import { ClassesProps } from '../types';
+import { ClassesProps, ComponentsProps } from '../types';
 
 export type PlayerProps = {
   name: string;
@@ -21,13 +18,16 @@ export type ClassProps = {
   };
 };
 
-export type Player<T> = PlayerProps & {
+export type BasePlayer = PlayerProps & {
   dead: boolean;
-  local: T;
   class: ClassProps & {
     key: string;
     team: 'citizen' | 'vampire' | 'other';
   };
+};
+
+type Player<T> = BasePlayer & {
+  local: T;
 };
 
 export type EventFunction = (game: Game) => void;
@@ -45,8 +45,9 @@ export type CreateClassParams<K extends keyof ClassesProps> = ClassProps & {
   betweenDayAndNight?: EventFunction;
   render: (
     game: Game,
-    player: Player<ClassesProps[K]['local']>
-  ) => Partial<Components>;
+    player: Player<ClassesProps[K]['local']>,
+    done: () => void
+  ) => Partial<ComponentsProps>;
 } & Setup<{ setupVars: () => ClassesProps[K]['vars'] }> &
   Setup<{ setupPlayer: () => ClassesProps[K]['local'] }>;
 
@@ -144,12 +145,13 @@ export function createClass<K extends keyof ClassesProps>(
       }
     }
 
-    render(game: Game): Partial<Components> {
-      const tree = methods.render(game, this);
+    render(game: Game, done: () => void): Partial<ComponentsProps> {
+      const tree = methods.render(game, this, done);
 
       return {
         ...tree,
         buttons: {
+          onConfirm: done,
           ...tree.buttons,
         },
         playerInfo: {
@@ -158,20 +160,6 @@ export function createClass<K extends keyof ClassesProps>(
           className: this.class.name,
           ...tree.playerInfo,
         },
-        playersList:
-          preset !== 'vampire'
-            ? tree.playersList
-            : {
-                asideTextExtractor: item =>
-                  String(
-                    game.vars.votesVamp[item.index] +
-                      (game.selectedIndex === item.index ? 1 : 0)
-                  ),
-                asideImageExtractor: item =>
-                  item.class.team === 'vampire' ? VampireOutlineImg : null,
-                columnsStyle: 'single',
-                ...tree.playersList,
-              },
       };
     }
   };

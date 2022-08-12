@@ -16,9 +16,6 @@ export const componentsOrder: ComponentKeys[] = [
   'buttons',
 ];
 
-export type Components = {
-  [Property in ComponentKeys]: Omit<
-    Parameters<typeof components[Property]>[0],
-    'game'
-  > | null;
-};
+export * from './Buttons';
+export * from './PlayerInfo';
+export * from './PlayersList';

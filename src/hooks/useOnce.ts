@@ -1,11 +1,7 @@
 import { useRef } from 'react';
 
-export const useOnce = (cb: () => void) => {
-  const used = useRef(false);
+export function useOnce<T = void>(cb: () => T) {
+  const value = useRef<T>(cb());
 
-  if (!used.current) {
-    cb();
-
-    used.current = true;
-  }
-};
+  return value.current;
+}
