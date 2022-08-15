@@ -24,9 +24,13 @@ export const Playing = ({ navigation }: PlayingScreenProps) => {
   const tree = player.render(game, () => {
     game.selectedIndex = -1;
 
-    game.nextTurn();
+    const turn = game.nextTurn();
 
-    navigation.replace('Turn');
+    if (turn !== -1) {
+      navigation.replace('Turn');
+    } else {
+      game.afterEachNight();
+    }
   });
 
   return (

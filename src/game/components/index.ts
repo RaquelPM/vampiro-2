@@ -18,8 +18,3 @@ export const componentsOrder: ComponentKeys[] = [
   'playersList',
   'buttons',
 ];
-
-export * from './Buttons';
-export * from './Item';
-export * from './PlayerInfo';
-export * from './PlayersList';

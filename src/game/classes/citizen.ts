@@ -1,8 +1,9 @@
 import { citizenImg } from '~/assets/classes';
 
+import { ClassVars } from '../types';
 import { createClass } from './createClass';
 
-export type CitizenProps = Record<string, never>;
+export type CitizenVars = ClassVars;
 
 export const Citizen = createClass('citizen', {
   team: 'citizen',

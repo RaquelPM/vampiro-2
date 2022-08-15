@@ -12,10 +12,9 @@ export type PlayerInfoProps = {
 };
 
 export const PlayerInfo = ({
-  game,
-  classImg = game.currentPlayer.class.image,
-  className = game.currentPlayer.class.name,
-  playerName = game.currentPlayer.name,
+  classImg,
+  className,
+  playerName,
   instruction,
 }: GameComponent<PlayerInfoProps>) => {
   const Image = classImg;

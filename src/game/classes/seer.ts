@@ -1,8 +1,9 @@
 import { seerImg } from '~/assets/classes';
 
+import { ClassVars } from '../types';
 import { createClass } from './createClass';
 
-export type SeerProps = Record<string, never>;
+export type SeerVars = ClassVars;
 
 export const Seer = createClass('seer', {
   team: 'citizen',

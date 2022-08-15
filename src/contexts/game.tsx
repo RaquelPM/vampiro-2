@@ -1,7 +1,8 @@
 import React, { createContext } from 'react';
 
 import { Game } from '~/game';
-import { useLocal, useOnce } from '~/hooks';
+import { useLocal } from '~/hooks/useLocal';
+import { useOnce } from '~/hooks/useOnce';
 
 export const GameContext = createContext({} as Game);
 

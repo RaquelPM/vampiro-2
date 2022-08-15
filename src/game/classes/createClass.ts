@@ -1,8 +1,10 @@
 import { FC } from 'react';
 import { SvgProps } from 'react-native-svg';
 
+import { UnionToIntersection } from '~/types';
+
+import { Actions, ClassesVars, ComponentsProps } from '../types';
 import { Game } from '..';
-import { ClassesProps, ComponentsProps } from '../types';
 
 export type PlayerProps = {
   name: string;
@@ -18,44 +20,74 @@ export type ClassProps = {
   };
 };
 
-export type BasePlayer = PlayerProps & {
+type BaseInstance<K extends keyof ClassesVars> = PlayerProps & {
   dead: boolean;
   class: ClassProps & {
-    key: string;
+    key: K;
     team: 'citizen' | 'vampire' | 'other';
   };
+  vars: UnionToIntersection<ClassesVars[keyof ClassesVars]['player']> &
+    ClassesVars[K]['instance'];
+  render(game: Game, done: () => void): Partial<ComponentsProps>;
 };
 
-type Player<T> = BasePlayer & {
-  local: T;
+export type Player = {
+  [Property in keyof ClassesVars]: BaseInstance<Property>;
+}[keyof ClassesVars];
+
+type EventFunction = (game: Game) => void;
+
+type Interceptors = {
+  [Property in keyof Actions]?: (
+    game: Game,
+    ...args: Actions[Property]['params']
+  ) => Actions[Property]['params'];
 };
 
-export type EventFunction = (game: Game) => void;
-
-type Setup<T extends { [key: string]: () => any }> =
-  T[keyof T] extends () => Record<never, never> ? Partial<T> : Required<T>;
-
-export type CreateClassParams<K extends keyof ClassesProps> = ClassProps & {
+export type CreateClassParams<K extends keyof ClassesVars> = ClassProps & {
   team: 'citizen' | 'vampire' | 'other';
+  setup?: (game: Game) => void;
+  setupPlayer?: (player: Player) => void;
+  setupInstance?: (player: BaseInstance<K>) => void;
   beforeEachNight?: EventFunction;
   afterEachNight?: EventFunction;
-  betweenNightAndDay?: EventFunction;
   beforeEachDay?: EventFunction;
   afterEachDay?: EventFunction;
-  betweenDayAndNight?: EventFunction;
   render: (
     game: Game,
-    player: Player<ClassesProps[K]['local']>,
+    player: BaseInstance<K>,
     done: () => void
   ) => Partial<ComponentsProps>;
-} & Setup<{ setupVars: () => ClassesProps[K]['vars'] }> &
-  Setup<{ setupPlayer: () => ClassesProps[K]['local'] }>;
+  interceptors?: Interceptors;
+} & (ClassesVars[K]['actions'] extends Record<string, (...args: any) => void>
+    ? {
+        actions: {
+          [Property in keyof ClassesVars[K]['actions']]: ClassesVars[K]['actions'][Property] extends (
+            ...args: infer A
+          ) => void
+            ? (game: Game, ...args: A) => void
+            : never;
+        };
+      }
+    : {
+        actions?: undefined;
+      });
 
-export function createClass<K extends keyof ClassesProps>(
+export function createClass<K extends keyof ClassesVars>(
   key: K,
-  { name, image, team, rules, ...methods }: CreateClassParams<K>
+  {
+    name,
+    image,
+    team,
+    rules,
+    actions,
+    interceptors,
+    ...methods
+  }: CreateClassParams<K>
 ) {
-  return class Class implements Player<ClassesProps[K]['local']> {
+  type Role = BaseInstance<K>;
+
+  return class Class implements Role {
     static key = key;
 
     static displayName = name;
@@ -64,13 +96,17 @@ export function createClass<K extends keyof ClassesProps>(
 
     static rules = rules;
 
+    static actions = actions || ({} as Record<never, never>);
+
+    static interceptors = interceptors || ({} as Interceptors);
+
     name: string;
 
     index: number;
 
     dead: boolean;
 
-    local: ClassesProps[K]['local'];
+    vars: Role['vars'];
 
     class: ClassProps & {
       key: K;
@@ -81,8 +117,7 @@ export function createClass<K extends keyof ClassesProps>(
       this.name = player.name;
       this.index = player.index;
       this.dead = false;
-
-      this.local = Class.setupPlayer();
+      this.vars = {} as Role['vars'];
 
       this.class = {
         key,
@@ -91,22 +126,22 @@ export function createClass<K extends keyof ClassesProps>(
         rules,
         team,
       };
-    }
 
-    static setupVars() {
-      if (methods.setupVars) {
-        return methods.setupVars();
+      if (methods.setupInstance) {
+        methods.setupInstance(this);
       }
-
-      return {} as ClassesProps[K]['vars'];
     }
 
-    static setupPlayer() {
+    static setup(game: Game) {
+      if (methods.setup) {
+        methods.setup(game);
+      }
+    }
+
+    static setupPlayer(player: Player) {
       if (methods.setupPlayer) {
-        return methods.setupPlayer();
+        methods.setupPlayer(player);
       }
-
-      return {} as ClassesProps[K]['local'];
     }
 
     static beforeEachNight(game: Game) {
@@ -118,12 +153,6 @@ export function createClass<K extends keyof ClassesProps>(
     static afterEachNight(game: Game) {
       if (methods.afterEachNight) {
         methods.afterEachNight(game);
-      }
-    }
-
-    static betweenNightAndDay(game: Game) {
-      if (methods.betweenNightAndDay) {
-        methods.betweenNightAndDay(game);
       }
     }
 
@@ -139,12 +168,6 @@ export function createClass<K extends keyof ClassesProps>(
       }
     }
 
-    static betweenDayAndNight(game: Game) {
-      if (methods.betweenDayAndNight) {
-        methods.betweenDayAndNight(game);
-      }
-    }
-
     render(game: Game, done: () => void): Partial<ComponentsProps> {
       const tree = methods.render(game, this, done);
 
@@ -156,8 +179,8 @@ export function createClass<K extends keyof ClassesProps>(
         },
         playerInfo: {
           classImg: this.class.image,
-          playerName: this.name,
           className: this.class.name,
+          playerName: this.name,
           ...tree.playerInfo,
         },
       };

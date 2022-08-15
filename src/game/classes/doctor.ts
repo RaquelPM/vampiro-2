@@ -1,12 +1,13 @@
 import { doctorImg } from '~/assets/classes';
 
+import { ClassVars } from '../types';
 import { createClass } from './createClass';
 
-export type DoctorProps = {
-  vars: {
-    protectedDoc: Set<number>;
+export type DoctorVars = ClassVars<{
+  player: {
+    protectedDoc: boolean;
   };
-};
+}>;
 
 export const Doctor = createClass('doctor', {
   team: 'citizen',
@@ -19,22 +20,10 @@ export const Doctor = createClass('doctor', {
     maxInstances: 2,
   },
 
-  setupVars() {
-    return {
-      protectedDoc: new Set<number>(),
-    };
-  },
-
   beforeEachNight(game) {
-    game.vars.protectedDoc.clear();
-  },
-
-  betweenNightAndDay(game) {
-    const { killedVamp, protectedDoc } = game.vars;
-
-    if (protectedDoc.has(killedVamp)) {
-      game.vars.killedVamp = -1;
-    }
+    game.players.forEach(item => {
+      item.vars.protectedDoc = false;
+    });
   },
 
   render(game, player, done) {
@@ -47,11 +36,21 @@ export const Doctor = createClass('doctor', {
 
       buttons: {
         onConfirm: () => {
-          game.vars.protectedDoc.add(game.selectedIndex);
+          game.selectedPlayer.vars.protectedDoc = true;
 
           done();
         },
       },
     };
+  },
+
+  interceptors: {
+    killVamp(game, player) {
+      if (player?.vars.protectedDoc) {
+        return [null];
+      }
+
+      return [player];
+    },
   },
 });

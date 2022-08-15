@@ -1,8 +1,8 @@
-import { Citizen, CitizenProps } from './citizen';
-import { Doctor, DoctorProps } from './doctor';
-import { Dracula, DraculaProps } from './dracula';
-import { Seer, SeerProps } from './seer';
-import { Vampire, VampireProps } from './vampire';
+import { Citizen } from './citizen';
+import { Doctor } from './doctor';
+import { Dracula } from './dracula';
+import { Seer } from './seer';
+import { Vampire } from './vampire';
 
 export const classes = {
   citizen: Citizen,
@@ -14,18 +14,6 @@ export const classes = {
 
 export type Classes = typeof classes;
 
-export type ClassesProps = {
-  citizen: CitizenProps;
-  doctor: DoctorProps;
-  dracula: DraculaProps;
-  seer: SeerProps;
-  vampire: VampireProps;
-};
-
 export type ClassKeys = keyof Classes;
 
-export * from './createClass';
-export * from './citizen';
-export * from './doctor';
-export * from './seer';
-export * from './vampire';
+export type { Player } from './createClass';

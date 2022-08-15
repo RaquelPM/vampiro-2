@@ -1,13 +1,16 @@
 import { vampireImg } from '~/assets/classes';
 
-import { createClass } from './createClass';
+import { ClassVars } from '../types';
+import { createClass, Player } from './createClass';
 
-export type VampireProps = {
-  vars: {
-    killedVamp: number;
-    votesVamp: number[];
+export type VampireVars = ClassVars<{
+  player: {
+    votesVamp: number;
   };
-};
+  actions: {
+    killVamp: (player: Player | null) => void;
+  };
+}>;
 
 export const Vampire = createClass('vampire', {
   team: 'vampire',
@@ -16,32 +19,25 @@ export const Vampire = createClass('vampire', {
 
   image: vampireImg,
 
-  setupVars() {
-    return {
-      killedVamp: -1,
-      votesVamp: [],
-    };
-  },
-
   beforeEachNight(game) {
-    game.vars.votesVamp = game.players.map(() => 0);
+    game.players.forEach(item => {
+      item.vars.votesVamp = 0;
+    });
   },
 
   afterEachNight(game) {
-    const { votesVamp } = game.vars;
+    const maxVotes = game.players.reduce((acc, curr) => {
+      return Math.max(acc, curr.vars.votesVamp);
+    }, 0);
 
-    const maxVotes = votesVamp.reduce((acc, curr) => Math.max(acc, curr), 0);
+    const mostVoted = game.players.filter(item => {
+      return item.vars.votesVamp === maxVotes;
+    });
 
-    const playerIndex = votesVamp.findIndex(item => item === maxVotes);
-
-    game.vars.killedVamp = playerIndex;
-  },
-
-  beforeEachDay(game) {
-    const { killedVamp } = game.vars;
-
-    if (killedVamp !== -1) {
-      game.players[killedVamp].dead = true;
+    if (mostVoted.length > 1) {
+      game.doAction('killVamp', null);
+    } else {
+      game.doAction('killVamp', mostVoted[0]);
     }
   },
 
@@ -57,11 +53,19 @@ export const Vampire = createClass('vampire', {
 
       buttons: {
         onConfirm: () => {
-          game.vars.votesVamp[game.selectedIndex] += 1;
+          game.selectedPlayer.vars.votesVamp += 1;
 
           done();
         },
       },
     };
+  },
+
+  actions: {
+    killVamp(game, player) {
+      if (player) {
+        player.dead = true;
+      }
+    },
   },
 });

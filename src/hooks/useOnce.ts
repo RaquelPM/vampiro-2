@@ -1,7 +1,7 @@
-import { useRef } from 'react';
+import { useOnChange } from './useOnChange';
 
 export function useOnce<T = void>(cb: () => T) {
-  const value = useRef<T>(cb());
+  const value = useOnChange(cb, []);
 
-  return value.current;
+  return value;
 }

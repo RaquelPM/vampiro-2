@@ -7,7 +7,7 @@ import {
 import { SvgProps } from 'react-native-svg';
 
 import { VampireOutlineImg } from '~/assets/icons';
-import { BasePlayer } from '~/game';
+import { Player } from '~/game';
 
 import { GameComponent } from '../base';
 import { Card } from './Card';
@@ -16,9 +16,9 @@ import { Container } from './styles';
 export type PlayerListProps = {
   vampirePreset?: boolean;
   style?: 'basic' | 'with-aside';
-  filter?: (item: BasePlayer) => boolean;
-  extractAsideTexts?: (item: BasePlayer) => string;
-  extractAsideImages?: (item: BasePlayer) => React.FC<SvgProps> | null;
+  filter?: (item: Player) => boolean;
+  extractAsideTexts?: (item: Player) => string;
+  extractAsideImages?: (item: Player) => React.FC<SvgProps> | null;
 };
 
 export const PlayerList = ({
@@ -53,8 +53,7 @@ export const PlayerList = ({
 
       if (vampirePreset) {
         return (
-          game.vars.votesVamp[item.index] +
-          (game.selectedIndex === item.index ? 1 : 0)
+          item.vars.votesVamp + (game.selectedIndex === item.index ? 1 : 0)
         );
       }
 
