@@ -18,6 +18,8 @@ export class Game {
   private reactive: {
     selectedIndex: number;
     setSelectedIndex: Dispatch<SetStateAction<number>>;
+    selectedItem: number;
+    setSelectedItem: Dispatch<SetStateAction<number>>;
   };
 
   constructor(
@@ -124,10 +126,13 @@ export class Game {
 
   useReactive() {
     const [selectedIndex, setSelectedIndex] = useState(-1);
+    const [selectedItem, setSelectedItem] = useState(-1);
 
     this.reactive = {
       selectedIndex,
       setSelectedIndex,
+      selectedItem,
+      setSelectedItem,
     };
 
     return { selectedIndex, setSelectedIndex };
@@ -139,6 +144,14 @@ export class Game {
 
   set selectedIndex(value: number) {
     this.reactive.setSelectedIndex(value);
+  }
+
+  get selectedItem() {
+    return this.reactive.selectedItem;
+  }
+
+  set selectedItem(value) {
+    this.reactive.setSelectedItem(value);
   }
 
   get selectedPlayer() {

@@ -5,7 +5,7 @@ import { createClass } from './createClass';
 export type SeerProps = Record<string, never>;
 
 export const Seer = createClass('seer', {
-  preset: 'citizen',
+  team: 'citizen',
 
   name: 'Vidente',
 

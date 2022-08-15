@@ -9,7 +9,7 @@ export type DoctorProps = {
 };
 
 export const Doctor = createClass('doctor', {
-  preset: 'citizen',
+  team: 'citizen',
 
   name: 'Médico',
 

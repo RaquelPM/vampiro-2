@@ -20,7 +20,9 @@ export const Container = styled(Animated.View)<ContainerProps>`
   justify-content: center;
 `;
 
-export const Wrapper = styled(RectButton)`
+const AnimatedRectButton = Animated.createAnimatedComponent(RectButton);
+
+export const Wrapper = styled(AnimatedRectButton)`
   padding: 0 0 0 21px;
 
   width: 75%;
@@ -28,8 +30,8 @@ export const Wrapper = styled(RectButton)`
   min-width: 250px;
   background: white;
   border-radius: 5px;
-  box-shadow: 0 4px 4px rgb(0, 0, 0);
-  elevation: 10;
+  box-shadow: 0 4px 4px rgb(0, 0, 0, 0.25);
+  elevation: 5;
 
   flex-direction: row;
   align-items: center;

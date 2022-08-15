@@ -4,6 +4,8 @@ import { View } from 'react-native';
 import { Button } from '~/components';
 
 export const Container = styled(View)`
+  flex: 1;
+
   padding: 14px 20px 42px;
 
   width: 100%;
@@ -13,5 +15,7 @@ export const Container = styled(View)`
 `;
 
 export const ConfirmBtn = styled(Button)`
+  margin: auto 0 0;
+
   width: ${p => p.theme.window.width - 60}px;
 `;

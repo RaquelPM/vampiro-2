@@ -36,7 +36,7 @@ type Setup<T extends { [key: string]: () => any }> =
   T[keyof T] extends () => Record<never, never> ? Partial<T> : Required<T>;
 
 export type CreateClassParams<K extends keyof ClassesProps> = ClassProps & {
-  preset: 'citizen' | 'vampire' | 'other';
+  team: 'citizen' | 'vampire' | 'other';
   beforeEachNight?: EventFunction;
   afterEachNight?: EventFunction;
   betweenNightAndDay?: EventFunction;
@@ -53,14 +53,14 @@ export type CreateClassParams<K extends keyof ClassesProps> = ClassProps & {
 
 export function createClass<K extends keyof ClassesProps>(
   key: K,
-  { name, image, rules, preset, ...methods }: CreateClassParams<K>
+  { name, image, team, rules, ...methods }: CreateClassParams<K>
 ) {
   return class Class implements Player<ClassesProps[K]['local']> {
     static key = key;
 
     static displayName = name;
 
-    static team = preset;
+    static team = team;
 
     static rules = rules;
 
@@ -74,7 +74,7 @@ export function createClass<K extends keyof ClassesProps>(
 
     class: ClassProps & {
       key: K;
-      team: typeof preset;
+      team: typeof team;
     };
 
     constructor(player: PlayerProps) {
@@ -89,7 +89,7 @@ export function createClass<K extends keyof ClassesProps>(
         name,
         image,
         rules,
-        team: preset,
+        team,
       };
     }
 

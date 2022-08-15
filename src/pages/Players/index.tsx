@@ -80,7 +80,7 @@ export const Players = ({ navigation }: PlayersScreenProps) => {
     await savePlayers();
 
     navigation.navigate('Game', {
-      screen: 'Playing',
+      screen: 'Turn',
     });
   };
 

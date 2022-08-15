@@ -14,6 +14,7 @@ export const usePlayers = () => {
   const [players, setPlayers] = useState(local.players);
 
   const id = useRef(players.length);
+  const deleted = useRef(-1);
 
   const positions = useSharedValue<Record<number, number>>(
     players.reduce((acc, curr, index) => {
@@ -25,11 +26,22 @@ export const usePlayers = () => {
     const newPositions: typeof positions.value = {};
 
     players.forEach((item, index) => {
+      if (deleted.current !== -1) {
+        newPositions[item.id] =
+          positions.value[item.id] > positions.value[deleted.current]
+            ? positions.value[item.id] - 1
+            : positions.value[item.id];
+
+        return;
+      }
+
       newPositions[item.id] =
         typeof positions.value[item.id] === 'number'
           ? positions.value[item.id]
           : index;
     });
+
+    deleted.current = -1;
 
     positions.value = newPositions;
   }, [players]);
@@ -67,6 +79,8 @@ export const usePlayers = () => {
     setPlayers(prev => {
       return prev.filter(item => item.id !== key);
     });
+
+    deleted.current = key;
   };
 
   const swapPlayers = (indexA: number, indexB: number) => {

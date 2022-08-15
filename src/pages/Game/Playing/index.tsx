@@ -26,7 +26,7 @@ export const Playing = ({ navigation }: PlayingScreenProps) => {
 
     game.nextTurn();
 
-    navigation.replace('Playing');
+    navigation.replace('Turn');
   });
 
   return (

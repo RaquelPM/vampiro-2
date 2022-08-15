@@ -1,13 +1,12 @@
 import { UnionToIntersection } from '~/types';
 
-import { DoctorProps, SeerProps, VampireProps } from '../classes';
-import { ButtonsProps, PlayerInfoProps, PlayerListProps } from '../components';
-
-type BaseClassesProps = {
-  doctor: DoctorProps;
-  seer: SeerProps;
-  vampire: VampireProps;
-};
+import { ClassesProps as BaseClassesProps } from '../classes';
+import {
+  ButtonsProps,
+  ItemProps,
+  PlayerInfoProps,
+  PlayerListProps,
+} from '../components';
 
 export type ClassesProps = {
   [Property in keyof BaseClassesProps]: {
@@ -26,6 +25,7 @@ export type Vars = UnionToIntersection<
 
 export type ComponentsProps = {
   buttons: ButtonsProps;
+  item: ItemProps;
   playerInfo: PlayerInfoProps;
   playersList: PlayerListProps;
 };

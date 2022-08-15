@@ -10,7 +10,7 @@ export type VampireProps = {
 };
 
 export const Vampire = createClass('vampire', {
-  preset: 'vampire',
+  team: 'vampire',
 
   name: 'Vampiro',
 

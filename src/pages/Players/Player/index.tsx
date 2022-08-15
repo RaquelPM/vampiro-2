@@ -1,5 +1,6 @@
 import React from 'react';
 import Animated, {
+  Keyframe,
   runOnJS,
   scrollTo,
   SharedValue,
@@ -43,6 +44,15 @@ export const Player = ({
   const position = useSharedValue(positions.value[id] * 84 || 0);
   const initial = useSharedValue(position.value);
   const active = useSharedValue(false);
+
+  const exiting = new Keyframe({
+    from: {
+      opacity: 1,
+    },
+    to: {
+      opacity: 0,
+    },
+  }).duration(200);
 
   useAnimatedReaction(
     () => positions.value[id],
@@ -108,7 +118,6 @@ export const Player = ({
   const dragStyle = useAnimatedStyle(() => ({
     top: position.value,
     zIndex: active.value ? length : positions.value[id],
-    elevation: active.value ? length : positions.value[id],
   }));
 
   const iconStyle = useAnimatedStyle(() => ({
@@ -117,7 +126,7 @@ export const Player = ({
 
   return (
     <Container index={index} style={dragStyle}>
-      <Wrapper rippleColor="#9994" onPress={onPress}>
+      <Wrapper rippleColor="#9994" exiting={exiting} onPress={onPress}>
         <Label>{name}</Label>
         <GestureDetector gesture={drag}>
           <IconWrapper>
