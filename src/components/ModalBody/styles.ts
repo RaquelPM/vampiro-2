@@ -17,7 +17,7 @@ export const Container = styled.View`
 export const Body = styled.View`
   padding: 42px 0;
 
-  width: ${p => p.theme.window.width - 40}px;
+  width: ${p => p.theme.window.width - 60}px;
   background: white;
   border-radius: 5px;
 

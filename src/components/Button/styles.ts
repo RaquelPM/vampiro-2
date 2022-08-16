@@ -7,19 +7,24 @@ import { Typography } from '../Typography';
 const AnimatedRectButton = Animated.createAnimatedComponent(RectButton);
 
 export type ContainerProps = {
-  size: 'regular' | 'large';
+  size: 'regular' | 'large' | 'small';
 };
 
 const buttonWidth = ({ size }: ContainerProps) => {
   if (size === 'regular') {
     return css`
       width: ${p => 0.75 * p.theme.window.width}px;
-      min-width: 250px;
+    `;
+  }
+
+  if (size === 'small') {
+    return css`
+      width: ${p => p.theme.window.width / 2 - 40}px;
     `;
   }
 
   return css`
-    width: ${p => p.theme.window.width - 40}px;
+    width: ${p => p.theme.window.width - 60}px;
   `;
 };
 
@@ -35,9 +40,10 @@ export const Container = styled(AnimatedRectButton)<ContainerProps>`
 `;
 
 export type LabelProps = {
-  enabled: boolean;
+  small: boolean;
 };
 
 export const Label = styled(Typography)<LabelProps>`
+  font-size: ${p => (p.small ? 24 : 32)}px;
   text-align: center;
 `;

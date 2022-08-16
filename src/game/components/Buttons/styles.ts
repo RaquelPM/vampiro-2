@@ -16,6 +16,4 @@ export const Container = styled(View)`
 
 export const ConfirmBtn = styled(Button)`
   margin: auto 0 0;
-
-  width: ${p => p.theme.window.width - 60}px;
 `;

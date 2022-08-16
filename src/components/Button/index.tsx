@@ -13,7 +13,7 @@ import { Container, Label } from './styles';
 
 export type ButtonProps = AnimateProps<RectButtonProps> & {
   children?: React.ReactNode;
-  size?: 'regular' | 'large';
+  size?: 'regular' | 'large' | 'small';
 };
 
 export const Button = ({
@@ -51,7 +51,7 @@ export const Button = ({
       style={[buttonStyle, style]}
       {...rest}
     >
-      <Label enabled={!!enabled} variant="button" style={textStyle}>
+      <Label small={size === 'small'} variant="button" style={textStyle}>
         {children}
       </Label>
     </Container>

@@ -23,7 +23,7 @@ export const Buttons = ({
 
   return (
     <Container>
-      <ConfirmBtn enabled={enabled} onPress={onPress}>
+      <ConfirmBtn size="large" enabled={enabled} onPress={onPress}>
         {confirmText}
       </ConfirmBtn>
     </Container>

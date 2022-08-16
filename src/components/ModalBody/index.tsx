@@ -10,7 +10,7 @@ export type ModalBodyProps = ViewProps & {
 
 export const ModalBody = ({
   children,
-  visible,
+  visible = false,
   onClose,
   ...rest
 }: ModalBodyProps) => {

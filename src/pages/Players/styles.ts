@@ -50,8 +50,7 @@ export const EmptyListLabel = styled(Typography)`
 export const AddBtn = styled(RectButton)`
   padding: 0 21px;
 
-  width: ${p => 0.75 * p.theme.window.width}px;
-  min-width: 250px;
+  width: 75%;
   height: 64px;
   background: ${p => p.theme.colors.accent};
   border-radius: 5px;

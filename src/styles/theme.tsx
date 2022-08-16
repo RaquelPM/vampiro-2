@@ -5,6 +5,7 @@ import styled, { ThemeProvider } from 'styled-components/native';
 export const theme = {
   colors: {
     primary: '#266AAB',
+    darkPrimary: '#1C5388',
     accent: '#E2213E',
     dark: '#081E2A',
     gray: '#767676',

@@ -58,10 +58,16 @@ export const Card = ({
   const left = useSharedValue(layout.left);
 
   useEffect(() => {
+    if (selected) {
+      active.value = withTiming(2, { duration: 200 });
+
+      return;
+    }
+
     active.value = withTiming(enabled ? 1 : 0, {
       duration: 200,
     });
-  }, [enabled]);
+  }, [enabled, selected]);
 
   useEffect(() => {
     width.value = withTiming(layout.width, {
@@ -86,16 +92,16 @@ export const Card = ({
   const buttonStyle = useAnimatedStyle(() => ({
     backgroundColor: interpolateColor(
       active.value,
-      [0, 1],
-      [colors.gray, selected ? colors.accent : 'white']
+      [0, 1, 2],
+      [colors.gray, 'white', colors.accent]
     ),
   }));
 
   const textStyle = useAnimatedStyle(() => ({
     color: interpolateColor(
       active.value,
-      [0, 1],
-      [colors.darkGray, selected ? 'white' : 'black']
+      [0, 1, 2],
+      [colors.darkGray, 'black', 'white']
     ),
   }));
 
