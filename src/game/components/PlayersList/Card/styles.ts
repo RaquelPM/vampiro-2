@@ -18,11 +18,9 @@ export const Container = styled(Animated.View)`
   justify-content: flex-end;
 `;
 
-export type PlayerBtnProps = {
-  selected: boolean;
-};
+const AnimatedRectButton = Animated.createAnimatedComponent(RectButton);
 
-export const PlayerBtn = styled(RectButton)<PlayerBtnProps>`
+export const PlayerBtn = styled(AnimatedRectButton)`
   position: absolute;
   top: 0;
   left: 0;
@@ -30,7 +28,6 @@ export const PlayerBtn = styled(RectButton)<PlayerBtnProps>`
   height: 64px;
   width: 100%;
   max-width: ${p => p.theme.window.width - 124}px;
-  background: ${p => (p.selected ? p.theme.colors.accent : 'white')};
   border-radius: 5px;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   elevation: 5;
@@ -39,13 +36,7 @@ export const PlayerBtn = styled(RectButton)<PlayerBtnProps>`
   justify-content: center;
 `;
 
-export type PlayerLabelProps = {
-  selected: boolean;
-};
-
-export const PlayerLabel = styled(Typography)<PlayerLabelProps>`
-  color: ${p => (p.selected ? 'white' : 'black')};
-`;
+export const PlayerLabel = styled(Typography)``;
 
 export const AsideLabel = styled(Typography)`
   width: 64px;

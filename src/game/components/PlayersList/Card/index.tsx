@@ -1,5 +1,6 @@
-import React, { memo, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import {
+  interpolateColor,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -15,69 +16,104 @@ export type CardProps = {
   selected: boolean;
   position: number;
   last: boolean;
-  asideText?: string | number;
-  asideImage?: React.FC<SvgProps> | null;
+  asideText: string | number;
+  asideImage: React.FC<SvgProps> | null;
+  enabled: boolean;
   onPress: () => void;
 };
 
-export const Card = memo(
-  ({
-    name,
-    size,
-    selected,
-    position,
-    last,
-    asideText,
-    asideImage: Image,
-    onPress,
-  }: CardProps) => {
-    const { window } = useTheme();
+export const Card = ({
+  name,
+  size,
+  selected,
+  position,
+  last,
+  asideText,
+  asideImage: Image,
+  enabled,
+  onPress,
+}: CardProps) => {
+  const { window, colors } = useTheme();
 
-    const width = useSharedValue(
-      size === 'large' ? window.width - 60 : window.width / 2 - 40
-    );
-    const top = useSharedValue(0);
-    const left = useSharedValue(30);
+  const active = useSharedValue(enabled ? 1 : 0);
 
-    useEffect(() => {
-      const leftForOdd = size === 'small' && last ? window.width / 4 + 20 : 30;
+  const layout = useMemo(() => {
+    const leftForOdd = size === 'small' && last ? window.width / 4 + 20 : 30;
 
-      width.value = withTiming(
-        size === 'large' ? window.width - 60 : window.width / 2 - 40,
-        { duration: 300 }
-      );
-      top.value = withTiming(
+    return {
+      width: size === 'large' ? window.width - 60 : window.width / 2 - 40,
+      top:
         size === 'large'
           ? position * 84 + 10
-          : Math.floor(position / 2) * 84 + 10
-      );
-      left.value = withTiming(
+          : Math.floor(position / 2) * 84 + 10,
+      left:
         size === 'small' && position % 2 === 1
           ? window.width / 2 + 10
           : leftForOdd,
-        { duration: 300 }
-      );
-    }, [size, position]);
+    };
+  }, [position, size]);
 
-    const containerStyle = useAnimatedStyle(() => {
-      return {
-        width: width.value,
-        top: top.value,
-        left: left.value,
-      };
+  const width = useSharedValue(layout.width);
+  const top = useSharedValue(layout.top);
+  const left = useSharedValue(layout.left);
+
+  useEffect(() => {
+    active.value = withTiming(enabled ? 1 : 0, {
+      duration: 200,
     });
+  }, [enabled]);
 
-    return (
-      <Container style={containerStyle}>
-        {Image ? (
-          <Image width={64} height={50} preserveAspectRatio="xMidYMid meet" />
-        ) : (
-          <AsideLabel variant="button">{asideText}</AsideLabel>
-        )}
-        <PlayerBtn rippleColor="#9994" selected={selected} onPress={onPress}>
-          <PlayerLabel selected={selected}>{name}</PlayerLabel>
-        </PlayerBtn>
-      </Container>
-    );
-  }
-);
+  useEffect(() => {
+    width.value = withTiming(layout.width, {
+      duration: 300,
+    });
+    top.value = withTiming(layout.top, {
+      duration: 300,
+    });
+    left.value = withTiming(layout.left, {
+      duration: 300,
+    });
+  }, [size, position]);
+
+  const containerStyle = useAnimatedStyle(() => {
+    return {
+      width: width.value,
+      top: top.value,
+      left: left.value,
+    };
+  });
+
+  const buttonStyle = useAnimatedStyle(() => ({
+    backgroundColor: interpolateColor(
+      active.value,
+      [0, 1],
+      [colors.gray, selected ? colors.accent : 'white']
+    ),
+  }));
+
+  const textStyle = useAnimatedStyle(() => ({
+    color: interpolateColor(
+      active.value,
+      [0, 1],
+      [colors.darkGray, selected ? 'white' : 'black']
+    ),
+  }));
+
+  return (
+    <Container style={containerStyle}>
+      {Image ? (
+        <Image width={64} height={50} preserveAspectRatio="xMidYMid meet" />
+      ) : (
+        <AsideLabel variant="button">{asideText}</AsideLabel>
+      )}
+      <PlayerBtn
+        style={buttonStyle}
+        rippleColor="#9994"
+        enabled={enabled}
+        onPress={onPress}
+      >
+        <PlayerLabel style={textStyle}>{name}</PlayerLabel>
+      </PlayerBtn>
+    </Container>
+  );
+};

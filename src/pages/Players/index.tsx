@@ -41,6 +41,7 @@ export const Players = ({ navigation }: PlayersScreenProps) => {
 
   const scroll = useSharedValue(0);
   const scrollHeight = useSharedValue(0);
+  const active = useSharedValue(-1);
 
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
 
@@ -114,6 +115,7 @@ export const Players = ({ navigation }: PlayersScreenProps) => {
               scroll={scroll}
               scrollRef={scrollRef}
               scrollHeight={scrollHeight}
+              active={active}
               positions={positions}
               onPress={() => setSelected(item)}
               onSwap={target => swapPlayers(positions.value[item.id], target)}

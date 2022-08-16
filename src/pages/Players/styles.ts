@@ -38,7 +38,6 @@ export const List = styled(Animated.ScrollView).attrs(
 )<ListProps>`
   width: 100%;
   height: 100%;
-  overflow: visible;
 `;
 
 export const EmptyListLabel = styled(Typography)`

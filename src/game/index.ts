@@ -4,7 +4,7 @@ import { getRandomInteger } from '~/utils';
 
 import type { Classes, ClassKeys, Player } from './classes';
 import { classes } from './classes';
-import { Actions, ClassesVars, GameVars } from './types';
+import { Actions, Announcement, ClassesVars, GameVars } from './types';
 
 export class Game {
   players: Player[];
@@ -12,6 +12,8 @@ export class Game {
   turn: number;
 
   vars: GameVars;
+
+  announcements: Announcement[];
 
   private actionsOrigins: Record<keyof Actions, keyof ClassesVars>;
 
@@ -25,6 +27,7 @@ export class Game {
   constructor(players: string[]) {
     this.players = players.map(() => ({} as Player));
     this.turn = 0;
+    this.announcements = [];
     this.vars = {} as GameVars;
     this.reactive = {} as any;
     this.actionsOrigins = {} as any;
@@ -50,7 +53,7 @@ export class Game {
     this.shuffledForEachPlayer((item, index) => {
       const random = getRandomInteger(0, keys.length);
 
-      const [key] = keys.splice(random, 1);
+      const key = keys[random];
 
       const Class = classes[key];
 

@@ -21,6 +21,7 @@ export type PlayerProps = {
   scroll: SharedValue<number>;
   scrollRef: React.RefObject<Animated.ScrollView>;
   scrollHeight: SharedValue<number>;
+  active: SharedValue<number>;
   positions: SharedValue<Record<number, number>>;
   onPress: () => void;
   onSwap: (target: number) => void;
@@ -35,6 +36,7 @@ export const Player = ({
   scroll,
   scrollRef,
   scrollHeight,
+  active,
   positions,
   onPress,
   onSwap,
@@ -43,7 +45,8 @@ export const Player = ({
 
   const position = useSharedValue(positions.value[id] * 84 || 0);
   const initial = useSharedValue(position.value);
-  const active = useSharedValue(false);
+  const lastActive = useSharedValue(false);
+  const inView = useSharedValue(false);
 
   const exiting = new Keyframe({
     from: {
@@ -55,9 +58,20 @@ export const Player = ({
   }).duration(200);
 
   useAnimatedReaction(
+    () => active.value,
+    value => {
+      if (value === id) {
+        lastActive.value = true;
+      } else if (value !== -1) {
+        lastActive.value = false;
+      }
+    }
+  );
+
+  useAnimatedReaction(
     () => positions.value[id],
     value => {
-      if (!active.value) {
+      if (active.value !== id) {
         position.value = withSpring(value * 84);
       }
     }
@@ -65,9 +79,11 @@ export const Player = ({
 
   const drag = Gesture.Pan()
     .onBegin(() => {
-      active.value = true;
+      active.value = id;
 
       initial.value = position.value;
+
+      inView.value = false;
     })
     .onUpdate(e => {
       const y = e.translationY + initial.value;
@@ -92,12 +108,12 @@ export const Player = ({
         return;
       }
 
-      if (y <= min + 20) {
-        scrollTo(scrollRef, 0, scroll.value + y - min - 20, false);
-      }
-
-      if (y >= max - 104) {
-        scrollTo(scrollRef, 0, scroll.value + y - max + 104, false);
+      if (y > min && y < max) {
+        inView.value = true;
+      } else if (y <= min && inView.value) {
+        scrollTo(scrollRef, 0, scroll.value - (min - y), true);
+      } else if (y >= max && inView.value) {
+        scrollTo(scrollRef, 0, scroll.value + (y - max), true);
       }
 
       const newIndex = Math.round(y / 84);
@@ -112,16 +128,16 @@ export const Player = ({
       position.value = withSpring(84 * positions.value[id]);
     })
     .onFinalize(() => {
-      active.value = false;
+      active.value = -1;
     });
 
   const dragStyle = useAnimatedStyle(() => ({
     top: position.value,
-    zIndex: active.value ? length : positions.value[id],
+    zIndex: lastActive.value ? length : positions.value[id],
   }));
 
   const iconStyle = useAnimatedStyle(() => ({
-    color: active.value ? 'blue' : 'gray',
+    color: active.value === id ? 'blue' : 'gray',
   }));
 
   return (

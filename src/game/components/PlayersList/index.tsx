@@ -17,6 +17,7 @@ export type PlayerListProps = {
   vampirePreset?: boolean;
   style?: 'basic' | 'with-aside';
   filter?: (item: Player) => boolean;
+  enable?: (item: Player) => boolean;
   extractAsideTexts?: (item: Player) => string;
   extractAsideImages?: (item: Player) => React.FC<SvgProps> | null;
 };
@@ -26,11 +27,10 @@ export const PlayerList = ({
   vampirePreset,
   style = vampirePreset ? 'with-aside' : 'basic',
   filter,
+  enable,
   extractAsideTexts,
   extractAsideImages,
 }: GameComponent<PlayerListProps>) => {
-  const height = useSharedValue(0);
-
   const players = useMemo(() => {
     return game.players.filter(item => {
       if (item.dead) {
@@ -43,7 +43,21 @@ export const PlayerList = ({
 
       return !filter || filter(item);
     });
-  }, [game.players]);
+  }, [game.players, filter]);
+
+  const isEnabled = useMemo(() => {
+    return players.map(item => {
+      if (enable) {
+        return enable(item);
+      }
+
+      if (vampirePreset) {
+        return item.class.team !== 'vampire';
+      }
+
+      return true;
+    });
+  }, [players, enable]);
 
   const texts = useMemo(() => {
     return players.map(item => {
@@ -59,7 +73,7 @@ export const PlayerList = ({
 
       return '';
     });
-  }, [game.selectedIndex, players]);
+  }, [game.selectedIndex, players, extractAsideTexts]);
 
   const images = useMemo(() => {
     return players.map(item => {
@@ -74,6 +88,12 @@ export const PlayerList = ({
       return null;
     });
   }, [players]);
+
+  const height = useSharedValue(
+    style === 'with-aside'
+      ? players.length * 84
+      : Math.ceil(players.length / 2) * 84
+  );
 
   const selectPlayer = (index: number) => {
     game.selectedIndex = index === game.selectedIndex ? -1 : index;
@@ -100,10 +120,11 @@ export const PlayerList = ({
           name={item.name}
           selected={game.selectedIndex === item.index}
           position={index}
-          last={index === game.players.length - 1}
+          last={index === players.length - 1}
           size={style === 'with-aside' ? 'large' : 'small'}
           asideText={texts[index]}
           asideImage={images[index]}
+          enabled={isEnabled[index]}
           onPress={() => selectPlayer(item.index)}
         />
       ))}

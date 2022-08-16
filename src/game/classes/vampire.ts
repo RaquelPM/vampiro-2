@@ -65,6 +65,21 @@ export const Vampire = createClass('vampire', {
     killVamp(game, player) {
       if (player) {
         player.dead = true;
+
+        game.announcements.push({
+          title: 'Os vampiros mataram:',
+          image: vampireImg,
+          object: {
+            name: player.name,
+            image: player.class.image,
+            alt: player.class.name,
+          },
+        });
+      } else {
+        game.announcements.push({
+          title: 'Os vampiros não mataram ninguém essa noite.',
+          image: vampireImg,
+        });
       }
     },
   },

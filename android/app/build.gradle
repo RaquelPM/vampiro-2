@@ -85,6 +85,10 @@ project.ext.react = [
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 apply from: "../../node_modules/react-native/react.gradle"
 
+def localPropertiesFile = rootProject.file("local.properties");
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(localPropertiesFile))
+
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -225,6 +229,13 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+
+        release {
+            storeFile file(localProperties['storeFile'])
+            storePassword localProperties['storePassword']
+            keyAlias localProperties['keyAlias']
+            keyPassword localProperties['keyPassword']
         }
     }
     buildTypes {
