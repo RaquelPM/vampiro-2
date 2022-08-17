@@ -44,6 +44,8 @@ export const Dracula = createClass('dracula', {
   },
 
   render(game, player, done) {
+    const { item, playersList } = game.controllers;
+
     return {
       playerInfo: {
         instruction: 'Transforme algum jogador ou vote em alguém para matar:',
@@ -56,17 +58,17 @@ export const Dracula = createClass('dracula', {
 
       playersList: {
         vampirePreset: true,
-        style: game.selectedItem !== -1 ? 'basic' : 'with-aside',
+        style: item.selected ? 'basic' : 'with-aside',
       },
 
       buttons: {
         onConfirm: () => {
-          if (game.selectedItem !== -1) {
+          if (item.selected) {
             player.vars.transformDracula = false;
 
-            game.vars.transformedDracula = game.selectedIndex;
+            game.vars.transformedDracula = playersList.selectedIndex;
           } else {
-            game.selectedPlayer.vars.votesVamp += 1;
+            playersList.selectedPlayer.vars.votesVamp += 1;
           }
 
           done();

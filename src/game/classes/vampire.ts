@@ -42,6 +42,8 @@ export const Vampire = createClass('vampire', {
   },
 
   render(game, player, done) {
+    const { playersList } = game.controllers;
+
     return {
       playerInfo: {
         instruction: 'Vote em alguém para morrer esta noite',
@@ -53,7 +55,7 @@ export const Vampire = createClass('vampire', {
 
       buttons: {
         onConfirm: () => {
-          game.selectedPlayer.vars.votesVamp += 1;
+          playersList.selectedPlayer.vars.votesVamp += 1;
 
           done();
         },

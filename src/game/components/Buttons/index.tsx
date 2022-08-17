@@ -1,20 +1,23 @@
 import React from 'react';
 
-import { GameComponent } from '../base';
+import { Component, ComponentData } from '~/game';
+
 import { ConfirmBtn, Container } from './styles';
 
-export type ButtonsProps = {
-  enabled?: boolean;
-  confirmText?: string;
-  onConfirm?: () => void;
-};
+export type ButtonsData = ComponentData<{
+  props: {
+    enabled?: boolean;
+    confirmText?: string;
+    onConfirm?: () => void;
+  };
+}>;
 
-export const Buttons = ({
+export const Buttons: Component<'buttons'> = ({
   game,
-  enabled = game.selectedIndex !== -1,
+  enabled = game.controllers.playersList.selectedIndex !== -1,
   confirmText = 'Prosseguir',
   onConfirm,
-}: GameComponent<ButtonsProps>) => {
+}) => {
   const onPress = () => {
     if (onConfirm) {
       onConfirm();

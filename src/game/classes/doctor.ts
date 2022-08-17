@@ -27,6 +27,8 @@ export const Doctor = createClass('doctor', {
   },
 
   render(game, player, done) {
+    const { playersList } = game.controllers;
+
     return {
       playerInfo: {
         instruction: 'Selecione alguém para proteger esta noite',
@@ -36,7 +38,7 @@ export const Doctor = createClass('doctor', {
 
       buttons: {
         onConfirm: () => {
-          game.selectedPlayer.vars.protectedDoc = true;
+          playersList.selectedPlayer.vars.protectedDoc = true;
 
           done();
         },

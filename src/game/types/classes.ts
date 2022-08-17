@@ -1,9 +1,3 @@
-import { CitizenVars } from '../classes/citizen';
-import { DoctorVars } from '../classes/doctor';
-import { DraculaVars } from '../classes/dracula';
-import { SeerVars } from '../classes/seer';
-import { VampireVars } from '../classes/vampire';
-
 export type ClassVars<
   T extends {
     game?: Record<string, any>;
@@ -24,12 +18,4 @@ export type ClassVars<
   actions: T['actions'] extends Record<string, (...args: any[]) => void>
     ? T['actions']
     : undefined;
-};
-
-export type ClassesVars = {
-  citizen: CitizenVars;
-  doctor: DoctorVars;
-  dracula: DraculaVars;
-  seer: SeerVars;
-  vampire: VampireVars;
 };

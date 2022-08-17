@@ -1,10 +1,8 @@
-import { Dispatch, SetStateAction, useState } from 'react';
-
 import { getRandomInteger } from '~/utils';
 
-import type { Classes, ClassKeys, Player } from './classes';
-import { classes } from './classes';
-import { Actions, Announcement, ClassesVars, GameVars } from './types';
+import { classes, Classes, ClassesVars, ClassKeys, Player } from './classes';
+import { components, ComponentsData } from './components';
+import { Actions, Announcement, GameVars } from './types';
 
 export class Game {
   players: Player[];
@@ -13,23 +11,22 @@ export class Game {
 
   vars: GameVars;
 
+  controllers: {
+    [Property in keyof ComponentsData]: ComponentsData[Property]['controller'] extends undefined
+      ? Record<never, never>
+      : ComponentsData[Property]['controller'];
+  };
+
   announcements: Announcement[];
 
   private actionsOrigins: Record<keyof Actions, keyof ClassesVars>;
-
-  private reactive: {
-    selectedIndex: number;
-    setSelectedIndex: Dispatch<SetStateAction<number>>;
-    selectedItem: number;
-    setSelectedItem: Dispatch<SetStateAction<number>>;
-  };
 
   constructor(players: string[]) {
     this.players = players.map(() => ({} as Player));
     this.turn = 0;
     this.announcements = [];
     this.vars = {} as GameVars;
-    this.reactive = {} as any;
+    this.controllers = {} as any;
     this.actionsOrigins = {} as any;
 
     this.drawClasses(players);
@@ -144,48 +141,27 @@ export class Game {
     return -1;
   }
 
-  useReactive() {
-    const [selectedIndex, setSelectedIndex] = useState(-1);
-    const [selectedItem, setSelectedItem] = useState(-1);
+  useControllers() {
+    Object.entries(components).forEach(([key, value]) => {
+      const useController = value.controller;
 
-    this.reactive = {
-      selectedIndex,
-      setSelectedIndex,
-      selectedItem,
-      setSelectedItem,
-    };
-
-    return { selectedIndex, setSelectedIndex };
-  }
-
-  get selectedIndex() {
-    return this.reactive.selectedIndex;
-  }
-
-  set selectedIndex(value: number) {
-    this.reactive.setSelectedIndex(value);
-  }
-
-  get selectedItem() {
-    return this.reactive.selectedItem;
-  }
-
-  set selectedItem(value) {
-    this.reactive.setSelectedItem(value);
-  }
-
-  get alivePlayers() {
-    return this.players.filter(item => !item.dead);
-  }
-
-  get selectedPlayer() {
-    return this.players[this.selectedIndex];
+      if (useController) {
+        this.controllers[key as keyof ComponentsData] = useController(
+          this
+        ) as any;
+      }
+    });
   }
 
   get currentPlayer() {
     return this.players[this.turn];
   }
+
+  get alivePlayers() {
+    return this.players.filter(item => !item.dead);
+  }
 }
 
 export * from './classes';
 export * from './components';
+export * from './types';

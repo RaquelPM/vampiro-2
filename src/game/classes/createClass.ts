@@ -3,8 +3,9 @@ import { SvgProps } from 'react-native-svg';
 
 import { UnionToIntersection } from '~/types';
 
-import { Actions, ClassesVars, ComponentsProps } from '../types';
+import { Actions, ComponentsProps } from '../types';
 import { Game } from '..';
+import { ClassesVars } from '.';
 
 export type PlayerProps = {
   name: string;
@@ -28,7 +29,7 @@ type BaseInstance<K extends keyof ClassesVars> = PlayerProps & {
   };
   vars: UnionToIntersection<ClassesVars[keyof ClassesVars]['player']> &
     ClassesVars[K]['instance'];
-  render(game: Game, done: () => void): Partial<ComponentsProps>;
+  render(game: Game, done: () => void): ComponentsProps;
 };
 
 export type Player = {
@@ -168,7 +169,7 @@ export function createClass<K extends keyof ClassesVars>(
       }
     }
 
-    render(game: Game, done: () => void): Partial<ComponentsProps> {
+    render(game: Game, done: () => void): ComponentsProps {
       const tree = methods.render(game, this, done);
 
       return {

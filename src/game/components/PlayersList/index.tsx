@@ -1,4 +1,10 @@
-import React, { useEffect, useMemo } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -7,22 +13,42 @@ import {
 import { SvgProps } from 'react-native-svg';
 
 import { VampireOutlineImg } from '~/assets/icons';
-import { Player } from '~/game';
+import { Component, ComponentController, ComponentData, Player } from '~/game';
 
-import { GameComponent } from '../base';
 import { Card } from './Card';
 import { Container } from './styles';
 
-export type PlayerListProps = {
-  vampirePreset?: boolean;
-  style?: 'basic' | 'with-aside';
-  filter?: (item: Player) => boolean;
-  enable?: (item: Player) => boolean;
-  extractAsideTexts?: (item: Player) => string;
-  extractAsideImages?: (item: Player) => React.FC<SvgProps> | null;
+export type PlayersListData = ComponentData<{
+  props: {
+    vampirePreset?: boolean;
+    style?: 'basic' | 'with-aside';
+    filter?: (item: Player) => boolean;
+    enable?: (item: Player) => boolean;
+    extractAsideTexts?: (item: Player) => string;
+    extractAsideImages?: (item: Player) => React.FC<SvgProps> | null;
+  };
+  controller: {
+    selectedIndex: number;
+    setSelectedIndex: Dispatch<SetStateAction<number>>;
+    selectedPlayer: Player;
+  };
+}>;
+
+export const usePlayersList: ComponentController<'playersList'> = game => {
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  const selectedPlayer = useMemo(() => {
+    return game.players[selectedIndex];
+  }, [selectedIndex]);
+
+  return {
+    selectedIndex,
+    setSelectedIndex,
+    selectedPlayer,
+  };
 };
 
-export const PlayerList = ({
+export const PlayersList: Component<'playersList'> = ({
   game,
   vampirePreset,
   style = vampirePreset ? 'with-aside' : 'basic',
@@ -30,7 +56,9 @@ export const PlayerList = ({
   enable,
   extractAsideTexts,
   extractAsideImages,
-}: GameComponent<PlayerListProps>) => {
+}) => {
+  const { selectedIndex, setSelectedIndex } = game.controllers.playersList;
+
   const players = useMemo(() => {
     return game.players.filter(item => {
       if (item.dead) {
@@ -66,14 +94,12 @@ export const PlayerList = ({
       }
 
       if (vampirePreset) {
-        return (
-          item.vars.votesVamp + (game.selectedIndex === item.index ? 1 : 0)
-        );
+        return item.vars.votesVamp + (selectedIndex === item.index ? 1 : 0);
       }
 
       return '';
     });
-  }, [game.selectedIndex, players, extractAsideTexts]);
+  }, [selectedIndex, players, extractAsideTexts]);
 
   const images = useMemo(() => {
     return players.map(item => {
@@ -96,7 +122,7 @@ export const PlayerList = ({
   );
 
   const selectPlayer = (index: number) => {
-    game.selectedIndex = index === game.selectedIndex ? -1 : index;
+    setSelectedIndex(index === selectedIndex ? -1 : index);
   };
 
   const containerStyle = useAnimatedStyle(() => ({
@@ -118,7 +144,7 @@ export const PlayerList = ({
         <Card
           key={item.index}
           name={item.name}
-          selected={game.selectedIndex === item.index}
+          selected={selectedIndex === item.index}
           position={index}
           last={index === players.length - 1}
           size={style === 'with-aside' ? 'large' : 'small'}

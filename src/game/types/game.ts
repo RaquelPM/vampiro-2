@@ -3,7 +3,7 @@ import { SvgProps } from 'react-native-svg';
 
 import { UnionToIntersection } from '~/types';
 
-import { ClassesVars } from '.';
+import { ClassesVars } from '../classes';
 
 export type Actions = UnionToIntersection<
   {

@@ -15,14 +15,14 @@ export type PlayingScreenProps = StackScreenProps<
 export const Playing = ({ navigation }: PlayingScreenProps) => {
   const game = useGame();
 
-  game.useReactive();
+  game.useControllers();
 
   const player = useOnce(() => {
     return game.currentPlayer;
   });
 
   const tree = player.render(game, () => {
-    game.selectedIndex = -1;
+    game.controllers.playersList.setSelectedIndex(-1);
 
     const turn = game.nextTurn();
 
@@ -39,7 +39,7 @@ export const Playing = ({ navigation }: PlayingScreenProps) => {
       {componentsOrder
         .filter(key => !!tree[key])
         .map(key => {
-          const Component = components[key];
+          const Component = components[key].component;
 
           return <Component key={key} game={game} {...tree[key]} />;
         })}

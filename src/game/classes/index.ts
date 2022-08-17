@@ -1,8 +1,16 @@
-import { Citizen } from './citizen';
-import { Doctor } from './doctor';
-import { Dracula } from './dracula';
-import { Seer } from './seer';
-import { Vampire } from './vampire';
+import { Citizen, CitizenVars } from './citizen';
+import { Doctor, DoctorVars } from './doctor';
+import { Dracula, DraculaVars } from './dracula';
+import { Seer, SeerVars } from './seer';
+import { Vampire, VampireVars } from './vampire';
+
+export type ClassesVars = {
+  citizen: CitizenVars;
+  doctor: DoctorVars;
+  dracula: DraculaVars;
+  seer: SeerVars;
+  vampire: VampireVars;
+};
 
 export const classes = {
   citizen: Citizen,

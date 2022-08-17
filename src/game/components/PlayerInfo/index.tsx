@@ -1,22 +1,25 @@
 import React from 'react';
 import { SvgProps } from 'react-native-svg';
 
-import { GameComponent } from '../base';
+import { Component, ComponentData } from '~/game/types';
+
 import { ClassName, Instruction, PlayerName } from './styles';
 
-export type PlayerInfoProps = {
-  classImg?: React.FC<SvgProps>;
-  className?: string;
-  playerName?: string;
-  instruction?: string;
-};
+export type PlayerInfoData = ComponentData<{
+  props: {
+    classImg?: React.FC<SvgProps>;
+    className?: string;
+    playerName?: string;
+    instruction?: string;
+  };
+}>;
 
-export const PlayerInfo = ({
+export const PlayerInfo: Component<'playerInfo'> = ({
   classImg,
   className,
   playerName,
   instruction,
-}: GameComponent<PlayerInfoProps>) => {
+}) => {
   const Image = classImg;
 
   return (
