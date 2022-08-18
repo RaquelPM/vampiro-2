@@ -1,5 +1,5 @@
 {
-  "name": "vampiro",
+  "name": "Vampiro",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -61,6 +61,7 @@
     "metro-babel-register": "^0.72.0",
     "metro-react-native-babel-preset": "^0.70.3",
     "prettier": "^2.7.1",
+    "react-native-rename": "^2.9.0",
     "react-native-svg-transformer": "^1.0.0",
     "react-test-renderer": "18.0.0",
     "ts-jest": "^27.1.5",
