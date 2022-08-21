@@ -10,6 +10,7 @@ export const theme = {
     dark: '#081E2A',
     gray: '#767676',
     darkGray: '#343434',
+    light: '#07A0C3',
     pink: '#BD2D87',
   },
   window: {

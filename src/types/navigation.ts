@@ -1,6 +1,7 @@
 import { NavigatorScreenParams } from '@react-navigation/native';
 
 export type GameNavigationScreens = {
+  Announcements: undefined;
   Turn: undefined;
   Playing: undefined;
 };

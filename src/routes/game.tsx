@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import { GameProvider } from '~/contexts';
-import { Playing, Turn } from '~/pages/Game';
+import { Announcements, Playing, Turn } from '~/pages/Game';
 import { GameNavigationScreens } from '~/types';
 import { navigateAnimation } from '~/utils';
 
@@ -16,6 +16,7 @@ export const GameRoutes = () => {
       >
         <GameStack.Screen name="Turn" component={Turn} />
         <GameStack.Screen name="Playing" component={Playing} />
+        <GameStack.Screen name="Announcements" component={Announcements} />
       </GameStack.Navigator>
     </GameProvider>
   );

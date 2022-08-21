@@ -19,15 +19,30 @@ export type Actions = UnionToIntersection<
   }[keyof ClassesVars]
 >;
 
-export type Announcement = {
-  title?: string;
-  image?: FC<SvgProps>;
-  object?: {
-    name?: string;
-    image?: FC<SvgProps>;
-    alt?: string;
-  };
-};
+export type Announcement =
+  | {
+      style: 'regular';
+      class: {
+        title: string;
+        image: FC<SvgProps>;
+      };
+      player: {
+        name: string;
+        class: string;
+        image: FC<SvgProps>;
+      };
+    }
+  | {
+      style: 'only-class';
+      title: string;
+      image: FC<SvgProps>;
+    }
+  | {
+      style: 'only-player';
+      title: string;
+      class: string;
+      image: FC<SvgProps>;
+    };
 
 export type GameVars = UnionToIntersection<
   ClassesVars[keyof ClassesVars]['game']

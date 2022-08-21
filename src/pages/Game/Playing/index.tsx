@@ -30,6 +30,8 @@ export const Playing = ({ navigation }: PlayingScreenProps) => {
       navigation.replace('Turn');
     } else {
       game.afterEachNight();
+
+      navigation.replace('Announcements');
     }
   });
 

@@ -69,17 +69,21 @@ export const Vampire = createClass('vampire', {
         player.dead = true;
 
         game.announcements.push({
-          title: 'Os vampiros mataram:',
-          image: vampireImg,
-          object: {
+          style: 'regular',
+          class: {
+            title: 'Os vampiros mataram:',
+            image: vampireImg,
+          },
+          player: {
             name: player.name,
+            class: player.class.name,
             image: player.class.image,
-            alt: player.class.name,
           },
         });
       } else {
         game.announcements.push({
-          title: 'Os vampiros não mataram ninguém essa noite.',
+          style: 'only-class',
+          title: 'Os vampiros não mataram ninguém esta noite.',
           image: vampireImg,
         });
       }
