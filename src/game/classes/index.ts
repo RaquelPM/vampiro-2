@@ -22,6 +22,8 @@ export const classes = {
 
 export type Classes = typeof classes;
 
+export type Class = Classes[keyof Classes];
+
 export type ClassKeys = keyof Classes;
 
 export type { Player } from './createClass';

@@ -10,5 +10,6 @@ export type NavigationScreens = {
   Home: undefined;
   More: undefined;
   Players: undefined;
+  ClassesList: undefined;
   Game: NavigatorScreenParams<GameNavigationScreens>;
 };

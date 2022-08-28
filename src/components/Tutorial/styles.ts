@@ -23,7 +23,7 @@ export const Label = styled(Typography)`
   position: absolute;
   bottom: 0;
 
-  padding: 13px 30px 0;
+  padding: 13px 20px 0;
 
   text-align: center;
 `;
