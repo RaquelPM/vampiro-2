@@ -89,9 +89,11 @@ export const Players = ({ navigation }: PlayersScreenProps) => {
 
     await savePlayers();
 
-    navigation.navigate('Game', {
-      screen: 'Turn',
-    });
+    // navigation.navigate('Game', {
+    //   screen: 'Turn',
+    // });
+
+    navigation.navigate('ClassesList');
   };
 
   return (

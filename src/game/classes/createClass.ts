@@ -93,6 +93,8 @@ export function createClass<K extends keyof ClassesVars>(
 
     static displayName = name;
 
+    static image = image;
+
     static team = team;
 
     static rules = rules;
