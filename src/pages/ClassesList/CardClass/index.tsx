@@ -15,17 +15,25 @@ import { useTheme } from 'styled-components';
 
 export type CardClassProps = {
   children?: React.ReactNode;
-  classes: Class;
+  role: Class;
+  isActive: boolean;
+  onChange: (value: boolean) => void;
 };
 
-export const CardClass = ({ children, classes }: CardClassProps) => {
-  const [active, setActive] = useState(false);
+export const CardClass = ({
+  children,
+  role,
+  isActive,
+  onChange,
+}: CardClassProps) => {
+  const [active, setActive] = useState(isActive);
 
   const { colors } = useTheme();
 
-  const Image = classes.image;
+  const Image = role.image;
 
   useEffect(() => {
+    onChange(active);
     if (active) {
       background.value = withTiming(1, { duration: 300 });
     } else {
@@ -54,9 +62,9 @@ export const CardClass = ({ children, classes }: CardClassProps) => {
   return (
     <ContainerComponent
       style={containerStyle}
-      onTouchEnd={() => setActive(prev => !prev)}
+      onTouchEnd={() => setActive(!active)}
     >
-      <Typography>{classes.displayName.toUpperCase()}</Typography>
+      <Typography>{role.displayName.toUpperCase()}</Typography>
       <Image height={100} width={'100%'} preserveAspectRatio="xMidYMid meet" />
       <ButtonSmall style={buttonStyle}>
         <ButtonText>{active ? 'Desativar' : 'Ativar'}</ButtonText>
